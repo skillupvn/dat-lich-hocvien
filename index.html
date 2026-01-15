@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Học Viên Học Thử - Pro Plus</title>
+    <title>Quản Lý Học Viên - Complete System</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -71,9 +73,9 @@
             transition: all 0.3s;
             border: none;
             background: none;
-            font-size: 1em;
+            font-size: 0.95em;
             white-space: nowrap;
-            min-width: 150px;
+            min-width: 140px;
         }
 
         .tab:hover {
@@ -171,7 +173,6 @@
         .btn-success:hover {
             background: #218838;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
         }
 
         .btn-info {
@@ -181,7 +182,6 @@
 
         .btn-info:hover {
             background: #138496;
-            transform: translateY(-2px);
         }
 
         .btn-warning {
@@ -191,7 +191,6 @@
 
         .btn-warning:hover {
             background: #e0a800;
-            transform: translateY(-2px);
         }
 
         .btn-danger {
@@ -263,6 +262,7 @@
         .table-actions {
             display: flex;
             gap: 5px;
+            flex-wrap: wrap;
         }
 
         .badge {
@@ -273,6 +273,19 @@
             border-radius: 12px;
             font-size: 0.85em;
             margin: 2px;
+        }
+
+        .badge-success {
+            background: #28a745;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .badge-info {
+            background: #17a2b8;
         }
 
         .empty-state {
@@ -317,6 +330,7 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            overflow-y: auto;
         }
 
         .modal.active {
@@ -327,10 +341,11 @@
             background: white;
             padding: 30px;
             border-radius: 12px;
-            max-width: 600px;
+            max-width: 800px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            margin: 20px;
         }
 
         .modal-header {
@@ -399,25 +414,6 @@
             border-left: 4px solid #17a2b8;
         }
 
-        .message-box {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 0.9em;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .copy-section {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
         .settings-group {
             background: white;
             border: 2px solid #e9ecef;
@@ -429,6 +425,135 @@
         .settings-group h3 {
             color: #667eea;
             margin-bottom: 15px;
+        }
+
+        .logo-preview {
+            width: 150px;
+            height: 150px;
+            border: 2px dashed #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .logo-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Receipt/Invoice Styles */
+        .receipt-container {
+            background: white;
+            padding: 40px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .receipt-logo {
+            width: 100px;
+            height: 100px;
+        }
+
+        .receipt-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .receipt-info {
+            text-align: right;
+        }
+
+        .receipt-title {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .receipt-details {
+            margin: 20px 0;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .receipt-row:last-child {
+            border-bottom: none;
+        }
+
+        .receipt-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .receipt-value {
+            color: #212529;
+        }
+
+        .receipt-amount {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .receipt-amount-label {
+            font-size: 1.2em;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .receipt-amount-value {
+            font-size: 2.5em;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .receipt-qr {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .receipt-qr canvas {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .receipt-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .qr-display {
+            display: inline-block;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
         }
 
         .switch {
@@ -501,16 +626,6 @@
             left: -9999px;
         }
 
-        .history-item {
-            background: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
         .auto-backup-status {
             display: inline-block;
             padding: 5px 15px;
@@ -529,14 +644,6 @@
             color: #721c24;
         }
 
-        .appointment-card {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin-top: 10px;
-            border-radius: 8px;
-        }
-
         .search-bar {
             padding: 12px;
             border: 2px solid #e9ecef;
@@ -546,25 +653,19 @@
             max-width: 100%;
         }
 
-        .view-toggle {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .view-toggle button {
-            padding: 8px 16px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .view-toggle button.active {
-            background: #667eea;
-            color: white;
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .receipt-container, .receipt-container * {
+                visibility: visible;
+            }
+            .receipt-container {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
         }
 
         @media (max-width: 768px) {
@@ -586,10 +687,6 @@
                 margin-top: 15px;
             }
 
-            .export-buttons {
-                grid-template-columns: 1fr;
-            }
-
             .table-container {
                 font-size: 0.85em;
             }
@@ -598,13 +695,14 @@
                 padding: 8px;
             }
 
-            .view-toggle {
-                flex-wrap: wrap;
-                justify-content: center;
+            .receipt-header {
+                flex-direction: column;
+                align-items: center;
             }
 
-            .search-bar {
-                width: 100%;
+            .receipt-info {
+                text-align: center;
+                margin-top: 20px;
             }
         }
     </style>
@@ -615,16 +713,17 @@
             <div class="header-actions">
                 <button class="btn btn-warning btn-sm" onclick="createBackup()">💾 Backup</button>
             </div>
-            <h1>📚 Quản Lý Học Viên Học Thử Pro Plus</h1>
-            <p>Hệ thống quản lý với Excel, Backup & Chỉnh sửa nâng cao</p>
+            <h1>📚 Hệ Thống Quản Lý Trung Tâm</h1>
+            <p>Quản lý học viên, lịch hẹn và biên lai/phiếu thu</p>
         </div>
 
         <div class="tabs">
             <button class="tab active" onclick="switchTab('dashboard')">📊 Tổng Quan</button>
-            <button class="tab" onclick="switchTab('add-student')">➕ Thêm Học Viên</button>
-            <button class="tab" onclick="switchTab('students')">👥 Danh Sách Học Viên</button>
+            <button class="tab" onclick="switchTab('add-student')">➕ Học Viên</button>
+            <button class="tab" onclick="switchTab('students')">👥 DS Học Viên</button>
             <button class="tab" onclick="switchTab('appointments')">📅 Lịch Hẹn</button>
-            <button class="tab" onclick="switchTab('export')">📤 Xuất Dữ Liệu</button>
+            <button class="tab" onclick="switchTab('receipts')">🧾 Biên Lai</button>
+            <button class="tab" onclick="switchTab('export')">📤 Xuất Data</button>
             <button class="tab" onclick="switchTab('settings')">⚙️ Cài Đặt</button>
         </div>
 
@@ -639,7 +738,7 @@
 
             <!-- Add Student Tab -->
             <div id="add-student" class="tab-content">
-                <h2 style="margin-bottom: 20px; color: #495057;">➕ Thêm Học Viên Mới</h2>
+                <h2 style="margin-bottom: 20px; color: #495057;">➕ Thêm/Sửa Học Viên</h2>
                 <form id="student-form">
                     <input type="hidden" id="editStudentId">
                     <div class="form-row">
@@ -698,7 +797,7 @@
 
                     <div style="display: flex; gap: 10px;">
                         <button type="submit" class="btn btn-primary" id="submitBtn">💾 Lưu Học Viên</button>
-                        <button type="button" class="btn btn-warning" id="cancelEditBtn" style="display: none;" onclick="cancelEdit()">❌ Hủy Chỉnh Sửa</button>
+                        <button type="button" class="btn btn-warning" id="cancelEditBtn" style="display: none;" onclick="cancelEdit()">❌ Hủy</button>
                     </div>
                 </form>
             </div>
@@ -707,7 +806,7 @@
             <div id="students" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                     <h2 style="color: #495057;">👥 Danh Sách Học Viên</h2>
-                    <input type="text" id="searchStudent" class="search-bar" placeholder="🔍 Tìm kiếm học viên...">
+                    <input type="text" id="searchStudent" class="search-bar" placeholder="🔍 Tìm kiếm...">
                 </div>
                 <div id="students-list"></div>
             </div>
@@ -716,67 +815,120 @@
             <div id="appointments" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                     <h2 style="color: #495057;">📅 Quản Lý Lịch Hẹn</h2>
-                    <input type="text" id="searchAppointment" class="search-bar" placeholder="🔍 Tìm kiếm lịch hẹn...">
+                    <input type="text" id="searchAppointment" class="search-bar" placeholder="🔍 Tìm kiếm...">
                 </div>
                 <div id="appointments-list"></div>
             </div>
 
+            <!-- Receipts Tab -->
+            <div id="receipts" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                    <h2 style="color: #495057;">🧾 Quản Lý Biên Lai/Phiếu Thu</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="searchReceipt" class="search-bar" placeholder="🔍 Tìm kiếm...">
+                        <button class="btn btn-success" onclick="openReceiptModal()">➕ Tạo Biên Lai</button>
+                    </div>
+                </div>
+                <div id="receipts-list"></div>
+            </div>
+
             <!-- Export Tab -->
             <div id="export" class="tab-content">
-                <h2 style="margin-bottom: 20px; color: #495057;">📤 Xuất Dữ Liệu Excel</h2>
+                <h2 style="margin-bottom: 20px; color: #495057;">📤 Xuất Dữ Liệu</h2>
                 
                 <div class="export-section">
-                    <h3 style="color: #667eea; margin-bottom: 15px;">📊 Xuất Báo Cáo Excel</h3>
-                    <p style="color: #6c757d; margin-bottom: 15px;">
-                        Xuất toàn bộ dữ liệu học viên và lịch hẹn sang file Excel để lưu trữ hoặc báo cáo.
-                    </p>
+                    <h3 style="color: #667eea; margin-bottom: 15px;">📊 Xuất Excel</h3>
                     <div class="export-buttons">
-                        <button class="btn btn-success" onclick="exportAllToExcel()">
-                            📊 Xuất Tất Cả (Excel)
-                        </button>
-                        <button class="btn btn-info" onclick="exportStudentsToExcel()">
-                            👥 Xuất Danh Sách Học Viên
-                        </button>
-                        <button class="btn btn-warning" onclick="exportAppointmentsToExcel()">
-                            📅 Xuất Lịch Hẹn
-                        </button>
-                        <button class="btn btn-primary" onclick="exportDetailedReport()">
-                            📋 Báo Cáo Chi Tiết
-                        </button>
+                        <button class="btn btn-success" onclick="exportAllToExcel()">📊 Xuất Tất Cả</button>
+                        <button class="btn btn-info" onclick="exportStudentsToExcel()">👥 Học Viên</button>
+                        <button class="btn btn-warning" onclick="exportAppointmentsToExcel()">📅 Lịch Hẹn</button>
+                        <button class="btn btn-primary" onclick="exportReceiptsToExcel()">🧾 Biên Lai</button>
                     </div>
                 </div>
 
                 <div class="export-section">
-                    <h3 style="color: #667eea; margin-bottom: 15px;">💾 Sao Lưu & Khôi Phục</h3>
-                    <p style="color: #6c757d; margin-bottom: 15px;">
-                        Sao lưu dữ liệu dưới dạng JSON để khôi phục sau này.
-                    </p>
+                    <h3 style="color: #667eea; margin-bottom: 15px;">💾 Backup & Restore</h3>
                     <div class="export-buttons">
-                        <button class="btn btn-success" onclick="exportBackupJSON()">
-                            💾 Tải Backup JSON
-                        </button>
+                        <button class="btn btn-success" onclick="exportBackupJSON()">💾 Tải Backup JSON</button>
                         <div class="file-input-wrapper">
-                            <button class="btn btn-info">📁 Khôi Phục Từ JSON</button>
+                            <button class="btn btn-info">📁 Khôi Phục JSON</button>
                             <input type="file" id="restoreFile" accept=".json" onchange="restoreFromJSON(event)">
                         </div>
                     </div>
-                </div>
-
-                <div class="export-section">
-                    <h3 style="color: #667eea; margin-bottom: 15px;">📈 Thống Kê</h3>
-                    <div id="export-stats"></div>
                 </div>
             </div>
 
             <!-- Settings Tab -->
             <div id="settings" class="tab-content">
-                <h2 style="margin-bottom: 20px; color: #495057;">⚙️ Cài Đặt</h2>
+                <h2 style="margin-bottom: 20px; color: #495057;">⚙️ Cài Đặt Hệ Thống</h2>
                 
                 <div class="settings-group">
+                    <h3>🏢 Thông Tin Trung Tâm</h3>
+                    <form id="center-info-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tên Trung Tâm *</label>
+                                <input type="text" id="centerName" placeholder="VD: Trung Tâm Giáo Dục ABC">
+                            </div>
+                            <div class="form-group">
+                                <label>Số Điện Thoại *</label>
+                                <input type="tel" id="centerPhone" placeholder="VD: 0912345678">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Địa Chỉ *</label>
+                            <input type="text" id="centerAddress" placeholder="VD: 123 Đường ABC, Quận XYZ, TP.HCM">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="centerEmail" placeholder="VD: contact@abc.edu.vn">
+                        </div>
+                        <div class="form-group">
+                            <label>Website</label>
+                            <input type="url" id="centerWebsite" placeholder="VD: https://abc.edu.vn">
+                        </div>
+                        <div class="form-group">
+                            <label>Logo Trung Tâm</label>
+                            <input type="file" id="centerLogo" accept="image/*" onchange="previewLogo(event)">
+                            <div class="logo-preview" id="logoPreview">
+                                <span style="color: #6c757d;">Chưa có logo</span>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">💾 Lưu Thông Tin</button>
+                    </form>
+                </div>
+
+                <div class="settings-group">
+                    <h3>💳 Thông Tin Ngân Hàng</h3>
+                    <form id="bank-info-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tên Ngân Hàng *</label>
+                                <input type="text" id="bankName" placeholder="VD: Vietcombank">
+                            </div>
+                            <div class="form-group">
+                                <label>Số Tài Khoản *</label>
+                                <input type="text" id="bankAccount" placeholder="VD: 1234567890">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Chủ Tài Khoản *</label>
+                            <input type="text" id="bankAccountName" placeholder="VD: NGUYEN VAN A">
+                        </div>
+                        <div class="form-group">
+                            <label>Chi Nhánh</label>
+                            <input type="text" id="bankBranch" placeholder="VD: Chi nhánh Tân Bình">
+                        </div>
+                        <button type="submit" class="btn btn-primary">💾 Lưu Thông Tin Ngân Hàng</button>
+                    </form>
+                    <div style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 10px;">Mã QR Chuyển Khoản:</h4>
+                        <div id="bankQRCode" class="qr-display"></div>
+                    </div>
+                </div>
+
+                <div class="settings-group">
                     <h3>🔄 Sao Lưu Tự Động</h3>
-                    <p style="color: #6c757d; margin-bottom: 15px;">
-                        Tự động sao lưu dữ liệu sau mỗi thay đổi quan trọng
-                    </p>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Bật sao lưu tự động</span>
                         <label class="switch">
@@ -790,27 +942,76 @@
                 </div>
 
                 <div class="settings-group">
-                    <h3>📜 Lịch Sử Backup</h3>
-                    <p style="color: #6c757d; margin-bottom: 15px;">
-                        5 bản sao lưu gần nhất
-                    </p>
-                    <div id="backup-history"></div>
-                </div>
-
-                <div class="settings-group">
                     <h3>🗑️ Xóa Dữ Liệu</h3>
                     <p style="color: #6c757d; margin-bottom: 15px;">
-                        <strong>Cảnh báo:</strong> Hành động này không thể hoàn tác!
+                        <strong>Cảnh báo:</strong> Không thể hoàn tác!
                     </p>
-                    <button class="btn btn-danger" onclick="clearAllData()">
-                        🗑️ Xóa Toàn Bộ Dữ Liệu
-                    </button>
+                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Xóa Toàn Bộ</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for Appointment -->
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🧾 Tạo/Sửa Biên Lai</h2>
+                <button class="close-modal" onclick="closeReceiptModal()">&times;</button>
+            </div>
+            <form id="receipt-form">
+                <input type="hidden" id="editReceiptId">
+                <div class="form-group">
+                    <label>Loại *</label>
+                    <select id="receiptType" required>
+                        <option value="">-- Chọn loại --</option>
+                        <option value="Biên Lai Điện Tử">💳 Biên Lai Điện Tử (Chuyển khoản)</option>
+                        <option value="Phiếu Thu">💵 Phiếu Thu (Tiền mặt)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Học Viên *</label>
+                    <select id="receiptStudent" required onchange="updateReceiptStudentInfo()">
+                        <option value="">-- Chọn học viên --</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phụ Huynh</label>
+                        <input type="text" id="receiptParent" readonly style="background: #f8f9fa;">
+                    </div>
+                    <div class="form-group">
+                        <label>Số Điện Thoại</label>
+                        <input type="text" id="receiptPhone" readonly style="background: #f8f9fa;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nội Dung Thu *</label>
+                    <input type="text" id="receiptDescription" required placeholder="VD: Học phí tháng 1/2024 - Cờ Vua">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Số Tiền *</label>
+                        <input type="number" id="receiptAmount" required placeholder="VD: 500000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Ngày Thu *</label>
+                        <input type="date" id="receiptDate" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Ghi Chú</label>
+                    <textarea id="receiptNotes" rows="2" placeholder="Ghi chú thêm (tùy chọn)"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-success">💾 Lưu Biên Lai</button>
+                    <button type="button" class="btn btn-warning" onclick="closeReceiptModal()">❌ Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Appointment Modal -->
     <div id="appointmentModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -844,31 +1045,40 @@
                 </div>
                 <div class="form-group">
                     <label>Ghi Chú</label>
-                    <textarea id="appointmentNotes" rows="3" placeholder="Nhập ghi chú về buổi học thử"></textarea>
+                    <textarea id="appointmentNotes" rows="3" placeholder="Ghi chú về buổi học thử"></textarea>
                 </div>
-                <button type="submit" class="btn btn-success" id="appointmentSubmitBtn">✅ Tạo Lịch Hẹn</button>
+                <button type="submit" class="btn btn-success">✅ Lưu Lịch Hẹn</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal for Notification Message -->
+    <!-- Notification Modal -->
     <div id="notificationModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📨 Thông Báo Gửi Phụ Huynh</h2>
+                <h2>📨 Thông Báo</h2>
                 <button class="close-modal" onclick="closeNotificationModal()">&times;</button>
             </div>
-            <p style="color: #6c757d; margin-bottom: 15px;">
-                Copy nội dung bên dưới để gửi cho phụ huynh qua SMS/Zalo/Messenger
-            </p>
-            <div class="message-box" id="notificationMessage"></div>
-            <div class="copy-section">
-                <button class="btn btn-copy" onclick="copyNotification()">
-                    📋 Copy Toàn Bộ
-                </button>
-                <button class="btn btn-success" onclick="closeNotificationModal()">
-                    ✅ Đã Copy
-                </button>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; white-space: pre-wrap; font-family: monospace; margin-bottom: 15px;" id="notificationMessage"></div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-copy" onclick="copyNotification()">📋 Copy</button>
+                <button class="btn btn-success" onclick="closeNotificationModal()">✅ OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Receipt Modal -->
+    <div id="viewReceiptModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>🧾 Xem Biên Lai</h2>
+                <button class="close-modal" onclick="closeViewReceiptModal()">&times;</button>
+            </div>
+            <div id="receiptPreview"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: center;">
+                <button class="btn btn-primary" onclick="downloadReceiptPDF()">📄 Tải PDF</button>
+                <button class="btn btn-info" onclick="printReceipt()">🖨️ In</button>
+                <button class="btn btn-success" onclick="closeViewReceiptModal()">✅ Đóng</button>
             </div>
         </div>
     </div>
@@ -880,16 +1090,24 @@
         // Data Storage
         let students = JSON.parse(localStorage.getItem('students')) || [];
         let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+        let receipts = JSON.parse(localStorage.getItem('receipts')) || [];
+        let centerInfo = JSON.parse(localStorage.getItem('centerInfo')) || {};
+        let bankInfo = JSON.parse(localStorage.getItem('bankInfo')) || {};
         let backupHistory = JSON.parse(localStorage.getItem('backupHistory')) || [];
         let autoBackupEnabled = localStorage.getItem('autoBackupEnabled') === 'true';
+
+        let currentReceiptForView = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             renderAll();
+            loadCenterInfo();
+            loadBankInfo();
             updateBackupStatus();
             
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('appointmentDate').min = today;
+            document.getElementById('receiptDate').value = today;
             document.getElementById('autoBackupToggle').checked = autoBackupEnabled;
         });
 
@@ -897,32 +1115,21 @@
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.className = `notification ${type} show`;
-            notification.innerHTML = `
-                <strong>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</strong>
-                <p style="margin-top: 5px;">${message}</p>
-            `;
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
+            notification.innerHTML = `<strong>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</strong><p style="margin-top: 5px;">${message}</p>`;
+            setTimeout(() => notification.classList.remove('show'), 3000);
         }
 
-        // Auto Backup System
+        // Auto Backup
         function createAutoBackup() {
             if (!autoBackupEnabled) return;
-            
             const backup = {
                 id: Date.now(),
                 date: new Date().toISOString(),
-                students: students,
-                appointments: appointments,
+                students, appointments, receipts, centerInfo, bankInfo,
                 type: 'auto'
             };
-
             backupHistory.unshift(backup);
-            if (backupHistory.length > 10) {
-                backupHistory = backupHistory.slice(0, 10);
-            }
-
+            if (backupHistory.length > 10) backupHistory = backupHistory.slice(0, 10);
             localStorage.setItem('backupHistory', JSON.stringify(backupHistory));
         }
 
@@ -930,13 +1137,8 @@
             autoBackupEnabled = document.getElementById('autoBackupToggle').checked;
             localStorage.setItem('autoBackupEnabled', autoBackupEnabled);
             updateBackupStatus();
-            
-            if (autoBackupEnabled) {
-                createAutoBackup();
-                showNotification('Đã bật sao lưu tự động', 'success');
-            } else {
-                showNotification('Đã tắt sao lưu tự động', 'info');
-            }
+            showNotification(autoBackupEnabled ? 'Đã bật sao lưu tự động' : 'Đã tắt sao lưu tự động', 'info');
+            if (autoBackupEnabled) createAutoBackup();
         }
 
         function updateBackupStatus() {
@@ -950,133 +1152,148 @@
             }
         }
 
-        function renderBackupHistory() {
-            const container = document.getElementById('backup-history');
-            
-            if (backupHistory.length === 0) {
-                container.innerHTML = '<p style="color: #6c757d;">Chưa có bản backup nào</p>';
-                return;
-            }
-
-            const html = backupHistory.slice(0, 5).map((backup, index) => `
-                <div class="history-item">
-                    <div>
-                        <strong>${backup.type === 'auto' ? '🔄 Tự động' : '💾 Thủ công'}</strong><br>
-                        <small style="color: #6c757d;">${formatDateTime(backup.date)}</small><br>
-                        <small>Học viên: ${backup.students.length} | Lịch hẹn: ${backup.appointments.length}</small>
-                    </div>
-                    <button class="btn btn-info btn-sm" onclick="restoreFromHistory(${index})">
-                        ↩️ Khôi phục
-                    </button>
-                </div>
-            `).join('');
-
-            container.innerHTML = html;
-        }
-
-        function restoreFromHistory(index) {
-            if (!confirm('Bạn có chắc muốn khôi phục dữ liệu từ bản backup này? Dữ liệu hiện tại sẽ bị ghi đè!')) return;
-
-            const backup = backupHistory[index];
-            students = backup.students;
-            appointments = backup.appointments;
-
-            localStorage.setItem('students', JSON.stringify(students));
-            localStorage.setItem('appointments', JSON.stringify(appointments));
-
-            renderAll();
-            showNotification('✅ Đã khôi phục dữ liệu thành công!', 'success');
-        }
-
         function createBackup() {
             const backup = {
                 id: Date.now(),
                 date: new Date().toISOString(),
-                students: students,
-                appointments: appointments,
+                students, appointments, receipts, centerInfo, bankInfo,
                 type: 'manual'
             };
-
             backupHistory.unshift(backup);
-            if (backupHistory.length > 10) {
-                backupHistory = backupHistory.slice(0, 10);
-            }
-
+            if (backupHistory.length > 10) backupHistory = backupHistory.slice(0, 10);
             localStorage.setItem('backupHistory', JSON.stringify(backupHistory));
-            renderBackupHistory();
-            showNotification('✅ Đã tạo bản backup thủ công!', 'success');
+            showNotification('✅ Đã tạo backup thủ công!', 'success');
         }
 
         // Tab Switching
         function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
 
             if (tabName === 'dashboard') renderDashboard();
             if (tabName === 'students') renderStudentsList();
             if (tabName === 'appointments') renderAppointmentsList();
-            if (tabName === 'export') renderExportStats();
-            if (tabName === 'settings') renderBackupHistory();
+            if (tabName === 'receipts') renderReceiptsList();
+            if (tabName === 'settings') {
+                loadCenterInfo();
+                loadBankInfo();
+            }
         }
 
-        // Student Form Submit
+        // Center Info
+        document.getElementById('center-info-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            centerInfo = {
+                name: document.getElementById('centerName').value,
+                phone: document.getElementById('centerPhone').value,
+                address: document.getElementById('centerAddress').value,
+                email: document.getElementById('centerEmail').value,
+                website: document.getElementById('centerWebsite').value,
+                logo: centerInfo.logo || ''
+            };
+            localStorage.setItem('centerInfo', JSON.stringify(centerInfo));
+            createAutoBackup();
+            showNotification('✅ Đã lưu thông tin trung tâm!', 'success');
+        });
+
+        function previewLogo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    centerInfo.logo = e.target.result;
+                    document.getElementById('logoPreview').innerHTML = `<img src="${e.target.result}" alt="Logo">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function loadCenterInfo() {
+            if (centerInfo.name) {
+                document.getElementById('centerName').value = centerInfo.name;
+                document.getElementById('centerPhone').value = centerInfo.phone || '';
+                document.getElementById('centerAddress').value = centerInfo.address || '';
+                document.getElementById('centerEmail').value = centerInfo.email || '';
+                document.getElementById('centerWebsite').value = centerInfo.website || '';
+                if (centerInfo.logo) {
+                    document.getElementById('logoPreview').innerHTML = `<img src="${centerInfo.logo}" alt="Logo">`;
+                }
+            }
+        }
+
+        // Bank Info
+        document.getElementById('bank-info-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            bankInfo = {
+                bankName: document.getElementById('bankName').value,
+                accountNumber: document.getElementById('bankAccount').value,
+                accountName: document.getElementById('bankAccountName').value,
+                branch: document.getElementById('bankBranch').value
+            };
+            localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
+            generateBankQR();
+            createAutoBackup();
+            showNotification('✅ Đã lưu thông tin ngân hàng!', 'success');
+        });
+
+        function loadBankInfo() {
+            if (bankInfo.bankName) {
+                document.getElementById('bankName').value = bankInfo.bankName;
+                document.getElementById('bankAccount').value = bankInfo.accountNumber || '';
+                document.getElementById('bankAccountName').value = bankInfo.accountName || '';
+                document.getElementById('bankBranch').value = bankInfo.branch || '';
+                generateBankQR();
+            }
+        }
+
+        function generateBankQR() {
+            const container = document.getElementById('bankQRCode');
+            container.innerHTML = '';
+            if (bankInfo.accountNumber && bankInfo.accountName) {
+                const qrData = `Bank: ${bankInfo.bankName}\nAccount: ${bankInfo.accountNumber}\nName: ${bankInfo.accountName}`;
+                new QRCode(container, {
+                    text: qrData,
+                    width: 200,
+                    height: 200
+                });
+            }
+        }
+
+        // Student Form
         document.getElementById('student-form').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            const subjects = Array.from(document.querySelectorAll('input[name="subject"]:checked'))
-                .map(cb => cb.value);
-
+            const subjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(cb => cb.value);
             if (subjects.length === 0) {
                 showNotification('Vui lòng chọn ít nhất một môn học!', 'error');
                 return;
             }
 
             const editId = document.getElementById('editStudentId').value;
-            
+            const studentData = {
+                name: document.getElementById('studentName').value,
+                age: document.getElementById('studentAge').value,
+                parentName: document.getElementById('parentName').value,
+                parentPhone: document.getElementById('parentPhone').value,
+                parentEmail: document.getElementById('parentEmail').value,
+                subjects: subjects,
+                notes: document.getElementById('notes').value
+            };
+
             if (editId) {
-                // Edit existing student
                 const index = students.findIndex(s => s.id == editId);
                 if (index !== -1) {
-                    students[index] = {
-                        ...students[index],
-                        name: document.getElementById('studentName').value,
-                        age: document.getElementById('studentAge').value,
-                        parentName: document.getElementById('parentName').value,
-                        parentPhone: document.getElementById('parentPhone').value,
-                        parentEmail: document.getElementById('parentEmail').value,
-                        subjects: subjects,
-                        notes: document.getElementById('notes').value,
-                        updatedAt: new Date().toISOString()
-                    };
+                    students[index] = { ...students[index], ...studentData, updatedAt: new Date().toISOString() };
                     showNotification('✅ Cập nhật học viên thành công!', 'success');
                 }
             } else {
-                // Add new student
-                const student = {
-                    id: Date.now(),
-                    name: document.getElementById('studentName').value,
-                    age: document.getElementById('studentAge').value,
-                    parentName: document.getElementById('parentName').value,
-                    parentPhone: document.getElementById('parentPhone').value,
-                    parentEmail: document.getElementById('parentEmail').value,
-                    subjects: subjects,
-                    notes: document.getElementById('notes').value,
-                    createdAt: new Date().toISOString()
-                };
-                students.push(student);
+                students.push({ id: Date.now(), ...studentData, createdAt: new Date().toISOString() });
                 showNotification('✅ Thêm học viên thành công!', 'success');
             }
 
             localStorage.setItem('students', JSON.stringify(students));
             createAutoBackup();
-
             this.reset();
             cancelEdit();
             renderAll();
@@ -1093,19 +1310,14 @@
             document.getElementById('parentPhone').value = student.parentPhone;
             document.getElementById('parentEmail').value = student.parentEmail || '';
             document.getElementById('notes').value = student.notes || '';
-
-            // Check subjects
             document.querySelectorAll('input[name="subject"]').forEach(cb => {
                 cb.checked = student.subjects.includes(cb.value);
             });
 
-            document.getElementById('submitBtn').textContent = '💾 Cập Nhật Học Viên';
+            document.getElementById('submitBtn').textContent = '💾 Cập Nhật';
             document.getElementById('cancelEditBtn').style.display = 'inline-flex';
-
-            // Switch to form tab
             switchTab('add-student');
             document.querySelector('.tab[onclick*="add-student"]').click();
-            window.scrollTo(0, 0);
         }
 
         function cancelEdit() {
@@ -1114,32 +1326,46 @@
             document.getElementById('cancelEditBtn').style.display = 'none';
         }
 
+        function deleteStudent(studentId) {
+            if (!confirm('Xóa học viên? Tất cả lịch hẹn và biên lai liên quan cũng sẽ bị xóa!')) return;
+            students = students.filter(s => s.id !== studentId);
+            appointments = appointments.filter(a => a.studentId !== studentId);
+            receipts = receipts.filter(r => r.studentId !== studentId);
+            localStorage.setItem('students', JSON.stringify(students));
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+            localStorage.setItem('receipts', JSON.stringify(receipts));
+            createAutoBackup();
+            renderAll();
+            showNotification('✅ Đã xóa học viên!', 'success');
+        }
+
         // Render Functions
         function renderAll() {
             renderDashboard();
             renderStudentsList();
             renderAppointmentsList();
-            renderExportStats();
-            renderBackupHistory();
+            renderReceiptsList();
+            populateStudentSelects();
         }
 
         function renderDashboard() {
+            const totalRevenue = receipts.reduce((sum, r) => sum + parseFloat(r.amount || 0), 0);
             const statsHtml = `
                 <div class="stat-card">
                     <h3>${students.length}</h3>
-                    <p>Tổng Học Viên</p>
+                    <p>Học Viên</p>
                 </div>
                 <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                     <h3>${appointments.length}</h3>
-                    <p>Tổng Lịch Hẹn</p>
+                    <p>Lịch Hẹn</p>
                 </div>
                 <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                    <h3>${getUpcomingAppointments().length}</h3>
-                    <p>Lịch Sắp Tới</p>
+                    <h3>${receipts.length}</h3>
+                    <p>Biên Lai</p>
                 </div>
                 <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                    <h3>${backupHistory.length}</h3>
-                    <p>Bản Backup</p>
+                    <h3>${formatCurrency(totalRevenue)}</h3>
+                    <p>Doanh Thu</p>
                 </div>
             `;
             document.getElementById('stats').innerHTML = statsHtml;
@@ -1148,145 +1374,311 @@
             const upcomingHtml = upcoming.length > 0 
                 ? upcoming.map(apt => {
                     const student = students.find(s => s.id === apt.studentId);
-                    return `
-                        <div class="appointment-card">
-                            <strong>👤 ${student?.name || 'N/A'}</strong> - 
-                            <strong>${apt.subject}</strong><br>
-                            📅 ${formatDate(apt.date)} lúc ${apt.time}<br>
-                            📞 ${student?.parentPhone || 'N/A'}
-                        </div>
-                    `;
+                    return `<div style="background: #fff3cd; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #ffc107;">
+                        <strong>👤 ${student?.name || 'N/A'}</strong> - <strong>${apt.subject}</strong><br>
+                        📅 ${formatDate(apt.date)} lúc ${apt.time}<br>
+                        📞 ${student?.parentPhone || 'N/A'}
+                    </div>`;
                 }).join('')
-                : '<div class="empty-state"><p>Chưa có lịch hẹn nào sắp tới</p></div>';
+                : '<div class="empty-state"><p>Chưa có lịch hẹn sắp tới</p></div>';
             
             document.getElementById('upcoming-appointments').innerHTML = upcomingHtml;
         }
 
         function renderStudentsList() {
             const container = document.getElementById('students-list');
-            
             if (students.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p style="font-size: 3em;">📋</p>
-                        <h3>Chưa có học viên nào</h3>
-                        <p>Hãy thêm học viên mới từ tab "Thêm Học Viên"</p>
-                    </div>
-                `;
+                container.innerHTML = '<div class="empty-state"><p style="font-size: 3em;">📋</p><h3>Chưa có học viên</h3></div>';
                 return;
             }
 
-            const html = `
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Tên Học Viên</th>
-                                <th>Tuổi</th>
-                                <th>Phụ Huynh</th>
-                                <th>Số Điện Thoại</th>
-                                <th>Email</th>
-                                <th>Môn Học</th>
-                                <th>Lịch Hẹn</th>
-                                <th>Thao Tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${students.map(student => {
-                                const studentAppointments = appointments.filter(a => a.studentId === student.id);
-                                return `
-                                    <tr>
-                                        <td><strong>${student.name}</strong></td>
-                                        <td>${student.age}</td>
-                                        <td>${student.parentName}</td>
-                                        <td>${student.parentPhone}</td>
-                                        <td>${student.parentEmail || '-'}</td>
-                                        <td>${student.subjects.map(s => `<span class="badge">${s}</span>`).join('')}</td>
-                                        <td><strong>${studentAppointments.length}</strong> lịch</td>
-                                        <td>
-                                            <div class="table-actions">
-                                                <button class="btn btn-info btn-sm" onclick="editStudent(${student.id})" title="Sửa">✏️</button>
-                                                <button class="btn btn-success btn-sm" onclick="openAppointmentModal(${student.id})" title="Đặt lịch">📅</button>
-                                                <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})" title="Xóa">🗑️</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
+            const html = `<div class="table-container"><table><thead><tr>
+                <th>Tên</th><th>Tuổi</th><th>Phụ Huynh</th><th>SĐT</th><th>Email</th><th>Môn Học</th><th>Thao Tác</th>
+            </tr></thead><tbody>${students.map(s => {
+                const aptCount = appointments.filter(a => a.studentId === s.id).length;
+                const receiptCount = receipts.filter(r => r.studentId === s.id).length;
+                return `<tr>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.age}</td>
+                    <td>${s.parentName}</td>
+                    <td>${s.parentPhone}</td>
+                    <td>${s.parentEmail || '-'}</td>
+                    <td>${s.subjects.map(sub => `<span class="badge">${sub}</span>`).join('')}</td>
+                    <td><div class="table-actions">
+                        <button class="btn btn-info btn-sm" onclick="editStudent(${s.id})" title="Sửa">✏️</button>
+                        <button class="btn btn-success btn-sm" onclick="openAppointmentModal(${s.id})" title="Lịch hẹn">📅</button>
+                        <button class="btn btn-warning btn-sm" onclick="openReceiptModal(${s.id})" title="Biên lai">🧾</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteStudent(${s.id})" title="Xóa">🗑️</button>
+                    </div></td>
+                </tr>`;
+            }).join('')}</tbody></table></div>`;
             container.innerHTML = html;
         }
 
-        // Search Students
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchStudent');
-            if (searchInput) {
-                searchInput.addEventListener('input', function(e) {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const filtered = students.filter(s => 
-                        s.name.toLowerCase().includes(searchTerm) ||
-                        s.parentName.toLowerCase().includes(searchTerm) ||
-                        s.parentPhone.includes(searchTerm) ||
-                        s.subjects.some(sub => sub.toLowerCase().includes(searchTerm))
-                    );
-                    
-                    const container = document.getElementById('students-list');
-                    if (filtered.length === 0) {
-                        container.innerHTML = '<div class="empty-state"><p>Không tìm thấy học viên nào</p></div>';
-                        return;
-                    }
-                    
-                    const html = `
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Tên Học Viên</th>
-                                        <th>Tuổi</th>
-                                        <th>Phụ Huynh</th>
-                                        <th>Số Điện Thoại</th>
-                                        <th>Email</th>
-                                        <th>Môn Học</th>
-                                        <th>Lịch Hẹn</th>
-                                        <th>Thao Tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${filtered.map(student => {
-                                        const studentAppointments = appointments.filter(a => a.studentId === student.id);
-                                        return `
-                                            <tr>
-                                                <td><strong>${student.name}</strong></td>
-                                                <td>${student.age}</td>
-                                                <td>${student.parentName}</td>
-                                                <td>${student.parentPhone}</td>
-                                                <td>${student.parentEmail || '-'}</td>
-                                                <td>${student.subjects.map(s => `<span class="badge">${s}</span>`).join('')}</td>
-                                                <td><strong>${studentAppointments.length}</strong> lịch</td>
-                                                <td>
-                                                    <div class="table-actions">
-                                                        <button class="btn btn-info btn-sm" onclick="editStudent(${student.id})">✏️</button>
-                                                        <button class="btn btn-success btn-sm" onclick="openAppointmentModal(${student.id})">📅</button>
-                                                        <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">🗑️</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                    container.innerHTML = html;
-                });
+        function renderAppointmentsList() {
+            const container = document.getElementById('appointments-list');
+            if (appointments.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p style="font-size: 3em;">📅</p><h3>Chưa có lịch hẹn</h3></div>';
+                return;
             }
+
+            const sorted = [...appointments].sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+            const html = `<div class="table-container"><table><thead><tr>
+                <th>Trạng Thái</th><th>Học Viên</th><th>Phụ Huynh</th><th>SĐT</th><th>Môn</th><th>Ngày</th><th>Giờ</th><th>Thao Tác</th>
+            </tr></thead><tbody>${sorted.map(apt => {
+                const student = students.find(s => s.id === apt.studentId);
+                const isPast = new Date(apt.date + ' ' + apt.time) < new Date();
+                return `<tr style="background: ${isPast ? '#f8f9fa' : 'white'};">
+                    <td>${isPast ? '✅ Đã qua' : '📅 Sắp tới'}</td>
+                    <td><strong>${student?.name || 'N/A'}</strong></td>
+                    <td>${student?.parentName || 'N/A'}</td>
+                    <td>${student?.parentPhone || 'N/A'}</td>
+                    <td><span class="badge">${apt.subject}</span></td>
+                    <td>${formatDate(apt.date)}</td>
+                    <td><strong>${apt.time}</strong></td>
+                    <td><div class="table-actions">
+                        <button class="btn btn-info btn-sm" onclick="editAppointment(${apt.id})">✏️</button>
+                        <button class="btn btn-copy btn-sm" onclick="resendNotification(${apt.id})">📨</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAppointment(${apt.id})">🗑️</button>
+                    </div></td>
+                </tr>`;
+            }).join('')}</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+
+        function renderReceiptsList() {
+            const container = document.getElementById('receipts-list');
+            if (receipts.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p style="font-size: 3em;">🧾</p><h3>Chưa có biên lai</h3></div>';
+                return;
+            }
+
+            const sorted = [...receipts].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const html = `<div class="table-container"><table><thead><tr>
+                <th>Số</th><th>Loại</th><th>Học Viên</th><th>Phụ Huynh</th><th>Nội Dung</th><th>Số Tiền</th><th>Ngày</th><th>Thao Tác</th>
+            </tr></thead><tbody>${sorted.map((r, idx) => {
+                const student = students.find(s => s.id === r.studentId);
+                return `<tr>
+                    <td><strong>#${String(sorted.length - idx).padStart(4, '0')}</strong></td>
+                    <td><span class="badge ${r.type.includes('Điện Tử') ? 'badge-info' : 'badge-success'}">${r.type}</span></td>
+                    <td><strong>${student?.name || 'N/A'}</strong></td>
+                    <td>${r.parentName}</td>
+                    <td>${r.description}</td>
+                    <td><strong style="color: #28a745;">${formatCurrency(r.amount)}</strong></td>
+                    <td>${formatDate(r.date)}</td>
+                    <td><div class="table-actions">
+                        <button class="btn btn-info btn-sm" onclick="viewReceipt(${r.id})" title="Xem">👁️</button>
+                        <button class="btn btn-warning btn-sm" onclick="editReceipt(${r.id})" title="Sửa">✏️</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteReceipt(${r.id})" title="Xóa">🗑️</button>
+                    </div></td>
+                </tr>`;
+            }).join('')}</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+
+        // Receipt Functions
+        function populateStudentSelects() {
+            const select = document.getElementById('receiptStudent');
+            select.innerHTML = '<option value="">-- Chọn học viên --</option>' + 
+                students.map(s => `<option value="${s.id}">${s.name} - ${s.parentName}</option>`).join('');
+        }
+
+        function updateReceiptStudentInfo() {
+            const studentId = parseInt(document.getElementById('receiptStudent').value);
+            const student = students.find(s => s.id === studentId);
+            if (student) {
+                document.getElementById('receiptParent').value = student.parentName;
+                document.getElementById('receiptPhone').value = student.parentPhone;
+            }
+        }
+
+        function openReceiptModal(studentId = null) {
+            document.getElementById('editReceiptId').value = '';
+            document.getElementById('receipt-form').reset();
+            document.getElementById('receiptDate').value = new Date().toISOString().split('T')[0];
+            if (studentId) {
+                document.getElementById('receiptStudent').value = studentId;
+                updateReceiptStudentInfo();
+            }
+            document.getElementById('receiptModal').classList.add('active');
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.remove('active');
+        }
+
+        document.getElementById('receipt-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const studentId = parseInt(document.getElementById('receiptStudent').value);
+            const student = students.find(s => s.id === studentId);
+            
+            const receiptData = {
+                studentId,
+                parentName: student.parentName,
+                parentPhone: student.parentPhone,
+                type: document.getElementById('receiptType').value,
+                description: document.getElementById('receiptDescription').value,
+                amount: document.getElementById('receiptAmount').value,
+                date: document.getElementById('receiptDate').value,
+                notes: document.getElementById('receiptNotes').value
+            };
+
+            const editId = document.getElementById('editReceiptId').value;
+            if (editId) {
+                const index = receipts.findIndex(r => r.id == editId);
+                if (index !== -1) {
+                    receipts[index] = { ...receipts[index], ...receiptData, updatedAt: new Date().toISOString() };
+                    showNotification('✅ Cập nhật biên lai thành công!', 'success');
+                }
+            } else {
+                receipts.push({ id: Date.now(), ...receiptData, createdAt: new Date().toISOString() });
+                showNotification('✅ Tạo biên lai thành công!', 'success');
+            }
+
+            localStorage.setItem('receipts', JSON.stringify(receipts));
+            createAutoBackup();
+            closeReceiptModal();
+            renderAll();
         });
 
-        // Appointment Modal
+        function editReceipt(receiptId) {
+            const receipt = receipts.find(r => r.id === receiptId);
+            if (!receipt) return;
+
+            document.getElementById('editReceiptId').value = receipt.id;
+            document.getElementById('receiptType').value = receipt.type;
+            document.getElementById('receiptStudent').value = receipt.studentId;
+            updateReceiptStudentInfo();
+            document.getElementById('receiptDescription').value = receipt.description;
+            document.getElementById('receiptAmount').value = receipt.amount;
+            document.getElementById('receiptDate').value = receipt.date;
+            document.getElementById('receiptNotes').value = receipt.notes || '';
+            document.getElementById('receiptModal').classList.add('active');
+        }
+
+        function deleteReceipt(receiptId) {
+            if (!confirm('Xóa biên lai này?')) return;
+            receipts = receipts.filter(r => r.id !== receiptId);
+            localStorage.setItem('receipts', JSON.stringify(receipts));
+            createAutoBackup();
+            renderAll();
+            showNotification('✅ Đã xóa biên lai!', 'success');
+        }
+
+        function viewReceipt(receiptId) {
+            const receipt = receipts.find(r => r.id === receiptId);
+            if (!receipt) return;
+
+            currentReceiptForView = receipt;
+            const student = students.find(s => s.id === receipt.studentId);
+            const receiptNumber = receipts.filter(r => new Date(r.date) <= new Date(receipt.date)).length;
+
+            const html = `
+                <div class="receipt-container" id="printableReceipt">
+                    <div class="receipt-header">
+                        <div class="receipt-logo">
+                            ${centerInfo.logo ? `<img src="${centerInfo.logo}" alt="Logo">` : '<div style="width: 100px; height: 100px; background: #e9ecef; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6c757d;">Logo</div>'}
+                        </div>
+                        <div class="receipt-info">
+                            <h3 style="margin: 0; color: #667eea;">${centerInfo.name || 'TRUNG TÂM'}</h3>
+                            <p style="margin: 5px 0;">📍 ${centerInfo.address || ''}</p>
+                            <p style="margin: 5px 0;">📞 ${centerInfo.phone || ''}</p>
+                            ${centerInfo.email ? `<p style="margin: 5px 0;">📧 ${centerInfo.email}</p>` : ''}
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 20px 0;">
+                        <div class="receipt-title">${receipt.type.toUpperCase()}</div>
+                        <p style="font-size: 1.2em; color: #6c757d;">Số: #${String(receiptNumber).padStart(4, '0')}</p>
+                    </div>
+
+                    <div class="receipt-details">
+                        <div class="receipt-row">
+                            <span class="receipt-label">Họ tên học viên:</span>
+                            <span class="receipt-value"><strong>${student?.name || 'N/A'}</strong></span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Phụ huynh:</span>
+                            <span class="receipt-value">${receipt.parentName}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Số điện thoại:</span>
+                            <span class="receipt-value">${receipt.parentPhone}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Nội dung thu:</span>
+                            <span class="receipt-value">${receipt.description}</span>
+                        </div>
+                        <div class="receipt-row">
+                            <span class="receipt-label">Ngày:</span>
+                            <span class="receipt-value">${formatDate(receipt.date)}</span>
+                        </div>
+                        ${receipt.notes ? `<div class="receipt-row">
+                            <span class="receipt-label">Ghi chú:</span>
+                            <span class="receipt-value">${receipt.notes}</span>
+                        </div>` : ''}
+                    </div>
+
+                    <div class="receipt-amount">
+                        <div class="receipt-amount-label">Số tiền</div>
+                        <div class="receipt-amount-value">${formatCurrency(receipt.amount)}</div>
+                        <div style="font-style: italic; color: #6c757d; margin-top: 10px;">(${numberToWords(receipt.amount)})</div>
+                    </div>
+
+                    ${receipt.type.includes('Điện Tử') && bankInfo.accountNumber ? `
+                    <div class="receipt-qr">
+                        <h4 style="margin-bottom: 10px;">Thông tin chuyển khoản:</h4>
+                        <p><strong>Ngân hàng:</strong> ${bankInfo.bankName}</p>
+                        <p><strong>Số TK:</strong> ${bankInfo.accountNumber}</p>
+                        <p><strong>Chủ TK:</strong> ${bankInfo.accountName}</p>
+                        <div id="receiptQRCode" style="margin-top: 15px;"></div>
+                    </div>
+                    ` : ''}
+
+                    <div class="receipt-footer">
+                        <p>Cảm ơn quý phụ huynh đã tin tưởng!</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">In lúc: ${new Date().toLocaleString('vi-VN')}</p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('receiptPreview').innerHTML = html;
+            
+            if (receipt.type.includes('Điện Tử') && bankInfo.accountNumber) {
+                setTimeout(() => {
+                    new QRCode(document.getElementById('receiptQRCode'), {
+                        text: `Bank: ${bankInfo.bankName}\nAccount: ${bankInfo.accountNumber}\nName: ${bankInfo.accountName}\nAmount: ${receipt.amount}\nContent: ${receipt.description}`,
+                        width: 150,
+                        height: 150
+                    });
+                }, 100);
+            }
+
+            document.getElementById('viewReceiptModal').classList.add('active');
+        }
+
+        function closeViewReceiptModal() {
+            document.getElementById('viewReceiptModal').classList.remove('active');
+        }
+
+        function printReceipt() {
+            window.print();
+        }
+
+        function downloadReceiptPDF() {
+            const element = document.getElementById('printableReceipt');
+            const opt = {
+                margin: 10,
+                filename: `BieuLai_${currentReceiptForView.id}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+            showNotification('✅ Đang tải PDF...', 'success');
+        }
+
+        // Appointment Functions
         function openAppointmentModal(studentId, appointmentId = null) {
             const student = students.find(s => s.id === studentId);
             if (!student) return;
@@ -1295,7 +1687,6 @@
             document.getElementById('appointmentStudentName').value = student.name;
             
             if (appointmentId) {
-                // Edit mode
                 const apt = appointments.find(a => a.id === appointmentId);
                 if (apt) {
                     document.getElementById('editAppointmentId').value = appointmentId;
@@ -1303,14 +1694,11 @@
                     document.getElementById('appointmentDate').value = apt.date;
                     document.getElementById('appointmentTime').value = apt.time;
                     document.getElementById('appointmentNotes').value = apt.notes || '';
-                    document.getElementById('appointmentSubmitBtn').textContent = '✅ Cập Nhật Lịch Hẹn';
                 }
             } else {
-                // Add mode
                 document.getElementById('editAppointmentId').value = '';
                 document.getElementById('appointment-form').reset();
                 document.getElementById('appointmentStudentName').value = student.name;
-                document.getElementById('appointmentSubmitBtn').textContent = '✅ Tạo Lịch Hẹn';
             }
             
             document.getElementById('appointmentModal').classList.add('active');
@@ -1318,20 +1706,16 @@
 
         function closeAppointmentModal() {
             document.getElementById('appointmentModal').classList.remove('active');
-            document.getElementById('appointment-form').reset();
-            document.getElementById('editAppointmentId').value = '';
         }
 
-        // Appointment Form Submit
         document.getElementById('appointment-form').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const studentId = parseInt(document.getElementById('appointmentStudentId').value);
             const student = students.find(s => s.id === studentId);
             const editId = document.getElementById('editAppointmentId').value;
 
             const appointmentData = {
-                studentId: studentId,
+                studentId,
                 subject: document.getElementById('appointmentSubject').value,
                 date: document.getElementById('appointmentDate').value,
                 time: document.getElementById('appointmentTime').value,
@@ -1339,49 +1723,48 @@
             };
 
             if (editId) {
-                // Edit existing appointment
                 const index = appointments.findIndex(a => a.id == editId);
                 if (index !== -1) {
-                    appointments[index] = {
-                        ...appointments[index],
-                        ...appointmentData,
-                        updatedAt: new Date().toISOString()
-                    };
-                    showNotification('✅ Cập nhật lịch hẹn thành công!', 'success');
+                    appointments[index] = { ...appointments[index], ...appointmentData, updatedAt: new Date().toISOString() };
+                    showNotification('✅ Cập nhật lịch hẹn!', 'success');
                 }
             } else {
-                // Create new appointment
-                const appointment = {
-                    id: Date.now(),
-                    ...appointmentData,
-                    createdAt: new Date().toISOString()
-                };
-                appointments.push(appointment);
+                appointments.push({ id: Date.now(), ...appointmentData, createdAt: new Date().toISOString() });
             }
 
             localStorage.setItem('appointments', JSON.stringify(appointments));
             createAutoBackup();
 
-            // Show notification with copy button
-            const message = `📅 THÔNG BÁO LỊCH HỌC THỬ
-
-Kính gửi phụ huynh: ${student.parentName}
-
-Chúng tôi xin thông báo lịch học thử cho bé ${student.name}:
-
-📚 Môn học: ${appointmentData.subject}
-📅 Ngày: ${formatDate(appointmentData.date)}
-⏰ Giờ: ${appointmentData.time}
-${appointmentData.notes ? `📝 Ghi chú: ${appointmentData.notes}` : ''}
-
-Vui lòng đến đúng giờ. Cảm ơn quý phụ huynh!
-
-📞 Liên hệ: ${student.parentPhone}`;
-
+            const message = `📅 THÔNG BÁO LỊCH HỌC THỬ\n\nKính gửi: ${student.parentName}\n\nLịch học thử cho bé ${student.name}:\n📚 Môn: ${appointmentData.subject}\n📅 Ngày: ${formatDate(appointmentData.date)}\n⏰ Giờ: ${appointmentData.time}\n${appointmentData.notes ? `📝 ${appointmentData.notes}\n` : ''}\nVui lòng đến đúng giờ!\n\n📞 ${student.parentPhone}`;
             showNotificationMessage(message);
+            
             closeAppointmentModal();
             renderAll();
         });
+
+        function editAppointment(appointmentId) {
+            const apt = appointments.find(a => a.id === appointmentId);
+            if (!apt) return;
+            openAppointmentModal(apt.studentId, appointmentId);
+        }
+
+        function deleteAppointment(appointmentId) {
+            if (!confirm('Xóa lịch hẹn?')) return;
+            appointments = appointments.filter(a => a.id !== appointmentId);
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+            createAutoBackup();
+            renderAll();
+            showNotification('✅ Đã xóa!', 'success');
+        }
+
+        function resendNotification(appointmentId) {
+            const apt = appointments.find(a => a.id === appointmentId);
+            const student = students.find(s => s.id === apt.studentId);
+            if (!apt || !student) return;
+
+            const message = `📅 THÔNG BÁO LỊCH HỌC THỬ\n\nKính gửi: ${student.parentName}\n\nNhắc lại lịch học thử cho bé ${student.name}:\n📚 Môn: ${apt.subject}\n📅 Ngày: ${formatDate(apt.date)}\n⏰ Giờ: ${apt.time}\n${apt.notes ? `📝 ${apt.notes}\n` : ''}\nVui lòng đến đúng giờ!\n\n📞 ${student.parentPhone}`;
+            showNotificationMessage(message);
+        }
 
         function showNotificationMessage(message) {
             document.getElementById('notificationMessage').textContent = message;
@@ -1395,422 +1778,105 @@ Vui lòng đến đúng giờ. Cảm ơn quý phụ huynh!
         function copyNotification() {
             const message = document.getElementById('notificationMessage').textContent;
             navigator.clipboard.writeText(message).then(() => {
-                showNotification('✅ Đã copy thông báo vào clipboard!', 'success');
+                showNotification('✅ Đã copy!', 'success');
             }).catch(() => {
-                // Fallback for older browsers
                 const textArea = document.createElement('textarea');
                 textArea.value = message;
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                showNotification('✅ Đã copy thông báo!', 'success');
+                showNotification('✅ Đã copy!', 'success');
             });
-        }
-
-        function renderAppointmentsList() {
-            const container = document.getElementById('appointments-list');
-            
-            if (appointments.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <p style="font-size: 3em;">📅</p>
-                        <h3>Chưa có lịch hẹn nào</h3>
-                        <p>Hãy đặt lịch hẹn cho học viên từ tab "Danh Sách Học Viên"</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const sortedAppointments = [...appointments].sort((a, b) => {
-                return new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time);
-            });
-
-            const html = `
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Trạng Thái</th>
-                                <th>Học Viên</th>
-                                <th>Phụ Huynh</th>
-                                <th>Số Điện Thoại</th>
-                                <th>Môn Học</th>
-                                <th>Ngày Hẹn</th>
-                                <th>Giờ Hẹn</th>
-                                <th>Ghi Chú</th>
-                                <th>Thao Tác</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${sortedAppointments.map(apt => {
-                                const student = students.find(s => s.id === apt.studentId);
-                                const isPast = new Date(apt.date + ' ' + apt.time) < new Date();
-                                return `
-                                    <tr style="background: ${isPast ? '#f8f9fa' : 'white'};">
-                                        <td>${isPast ? '✅ Đã qua' : '📅 Sắp tới'}</td>
-                                        <td><strong>${student?.name || 'N/A'}</strong></td>
-                                        <td>${student?.parentName || 'N/A'}</td>
-                                        <td>${student?.parentPhone || 'N/A'}</td>
-                                        <td><span class="badge">${apt.subject}</span></td>
-                                        <td>${formatDate(apt.date)}</td>
-                                        <td><strong>${apt.time}</strong></td>
-                                        <td>${apt.notes || '-'}</td>
-                                        <td>
-                                            <div class="table-actions">
-                                                <button class="btn btn-info btn-sm" onclick="editAppointment(${apt.id})" title="Sửa">✏️</button>
-                                                <button class="btn btn-copy btn-sm" onclick="resendNotification(${apt.id})" title="Gửi lại">📨</button>
-                                                <button class="btn btn-danger btn-sm" onclick="deleteAppointment(${apt.id})" title="Xóa">🗑️</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            container.innerHTML = html;
-        }
-
-        // Search Appointments
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchAppointment');
-            if (searchInput) {
-                searchInput.addEventListener('input', function(e) {
-                    const searchTerm = e.target.value.toLowerCase();
-                    const filtered = appointments.filter(apt => {
-                        const student = students.find(s => s.id === apt.studentId);
-                        return student?.name.toLowerCase().includes(searchTerm) ||
-                               student?.parentName.toLowerCase().includes(searchTerm) ||
-                               student?.parentPhone.includes(searchTerm) ||
-                               apt.subject.toLowerCase().includes(searchTerm) ||
-                               apt.date.includes(searchTerm);
-                    });
-                    
-                    const container = document.getElementById('appointments-list');
-                    if (filtered.length === 0) {
-                        container.innerHTML = '<div class="empty-state"><p>Không tìm thấy lịch hẹn nào</p></div>';
-                        return;
-                    }
-                    
-                    const sortedFiltered = [...filtered].sort((a, b) => {
-                        return new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time);
-                    });
-
-                    const html = `
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Trạng Thái</th>
-                                        <th>Học Viên</th>
-                                        <th>Phụ Huynh</th>
-                                        <th>Số Điện Thoại</th>
-                                        <th>Môn Học</th>
-                                        <th>Ngày Hẹn</th>
-                                        <th>Giờ Hẹn</th>
-                                        <th>Ghi Chú</th>
-                                        <th>Thao Tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${sortedFiltered.map(apt => {
-                                        const student = students.find(s => s.id === apt.studentId);
-                                        const isPast = new Date(apt.date + ' ' + apt.time) < new Date();
-                                        return `
-                                            <tr style="background: ${isPast ? '#f8f9fa' : 'white'};">
-                                                <td>${isPast ? '✅ Đã qua' : '📅 Sắp tới'}</td>
-                                                <td><strong>${student?.name || 'N/A'}</strong></td>
-                                                <td>${student?.parentName || 'N/A'}</td>
-                                                <td>${student?.parentPhone || 'N/A'}</td>
-                                                <td><span class="badge">${apt.subject}</span></td>
-                                                <td>${formatDate(apt.date)}</td>
-                                                <td><strong>${apt.time}</strong></td>
-                                                <td>${apt.notes || '-'}</td>
-                                                <td>
-                                                    <div class="table-actions">
-                                                        <button class="btn btn-info btn-sm" onclick="editAppointment(${apt.id})">✏️</button>
-                                                        <button class="btn btn-copy btn-sm" onclick="resendNotification(${apt.id})">📨</button>
-                                                        <button class="btn btn-danger btn-sm" onclick="deleteAppointment(${apt.id})">🗑️</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                    container.innerHTML = html;
-                });
-            }
-        });
-
-        function editAppointment(appointmentId) {
-            const apt = appointments.find(a => a.id === appointmentId);
-            if (!apt) return;
-            
-            openAppointmentModal(apt.studentId, appointmentId);
-        }
-
-        function resendNotification(appointmentId) {
-            const apt = appointments.find(a => a.id === appointmentId);
-            const student = students.find(s => s.id === apt.studentId);
-
-            if (!apt || !student) {
-                showNotification('Không tìm thấy thông tin!', 'error');
-                return;
-            }
-
-            const message = `📅 THÔNG BÁO LỊCH HỌC THỬ
-
-Kính gửi phụ huynh: ${student.parentName}
-
-Chúng tôi xin nhắc lại lịch học thử cho bé ${student.name}:
-
-📚 Môn học: ${apt.subject}
-📅 Ngày: ${formatDate(apt.date)}
-⏰ Giờ: ${apt.time}
-${apt.notes ? `📝 Ghi chú: ${apt.notes}` : ''}
-
-Vui lòng đến đúng giờ. Cảm ơn quý phụ huynh!
-
-📞 Liên hệ: ${student.parentPhone}`;
-
-            showNotificationMessage(message);
-        }
-
-        function deleteStudent(studentId) {
-            if (!confirm('Bạn có chắc muốn xóa học viên này? Tất cả lịch hẹn của học viên cũng sẽ bị xóa!')) return;
-
-            students = students.filter(s => s.id !== studentId);
-            appointments = appointments.filter(a => a.studentId !== studentId);
-            
-            localStorage.setItem('students', JSON.stringify(students));
-            localStorage.setItem('appointments', JSON.stringify(appointments));
-            createAutoBackup();
-
-            renderAll();
-            showNotification('✅ Đã xóa học viên!', 'success');
-        }
-
-        function deleteAppointment(appointmentId) {
-            if (!confirm('Bạn có chắc muốn xóa lịch hẹn này?')) return;
-
-            appointments = appointments.filter(a => a.id !== appointmentId);
-            localStorage.setItem('appointments', JSON.stringify(appointments));
-            createAutoBackup();
-
-            renderAll();
-            showNotification('✅ Đã xóa lịch hẹn!', 'success');
         }
 
         // Export Functions
-        function renderExportStats() {
-            const subjectStats = {};
-            students.forEach(s => {
-                s.subjects.forEach(subject => {
-                    subjectStats[subject] = (subjectStats[subject] || 0) + 1;
-                });
-            });
-
-            const html = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                    ${Object.entries(subjectStats).map(([subject, count]) => `
-                        <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #e9ecef;">
-                            <strong style="color: #667eea;">${subject}</strong><br>
-                            <span style="font-size: 1.5em;">${count}</span> học viên
-                        </div>
-                    `).join('')}
-                </div>
-                <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; border: 2px solid #e9ecef;">
-                    <strong>📊 Tổng quan:</strong><br>
-                    • Tổng học viên: ${students.length}<br>
-                    • Tổng lịch hẹn: ${appointments.length}<br>
-                    • Lịch hẹn sắp tới: ${getUpcomingAppointments().length}<br>
-                    • Lịch hẹn đã qua: ${appointments.length - getUpcomingAppointments().length}
-                </div>
-            `;
-
-            document.getElementById('export-stats').innerHTML = html;
-        }
-
         function exportAllToExcel() {
-            if (students.length === 0 && appointments.length === 0) {
-                showNotification('Không có dữ liệu để xuất!', 'error');
-                return;
-            }
-
             const wb = XLSX.utils.book_new();
-
-            // Students Sheet
+            
             const studentsData = students.map(s => ({
-                'Tên học viên': s.name,
-                'Tuổi': s.age,
-                'Phụ huynh': s.parentName,
-                'Số điện thoại': s.parentPhone,
-                'Email': s.parentEmail || '',
-                'Môn học': s.subjects.join(', '),
+                'Tên': s.name, 'Tuổi': s.age, 'Phụ huynh': s.parentName, 'SĐT': s.parentPhone,
+                'Email': s.parentEmail || '', 'Môn học': s.subjects.join(', '),
                 'Số lịch hẹn': appointments.filter(a => a.studentId === s.id).length,
-                'Ghi chú': s.notes || '',
-                'Ngày tạo': formatDateTime(s.createdAt)
+                'Số biên lai': receipts.filter(r => r.studentId === s.id).length
             }));
-            const ws1 = XLSX.utils.json_to_sheet(studentsData);
-            XLSX.utils.book_append_sheet(wb, ws1, 'Danh Sách Học Viên');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(studentsData), 'Học Viên');
 
-            // Appointments Sheet
             const appointmentsData = appointments.map(a => {
-                const student = students.find(s => s.id === a.studentId);
-                const isPast = new Date(a.date + ' ' + a.time) < new Date();
+                const s = students.find(st => st.id === a.studentId);
                 return {
-                    'Học viên': student?.name || 'N/A',
-                    'Phụ huynh': student?.parentName || 'N/A',
-                    'Số điện thoại': student?.parentPhone || 'N/A',
-                    'Môn học': a.subject,
-                    'Ngày hẹn': a.date,
-                    'Giờ hẹn': a.time,
-                    'Trạng thái': isPast ? 'Đã qua' : 'Sắp tới',
-                    'Ghi chú': a.notes || '',
-                    'Ngày tạo': formatDateTime(a.createdAt)
+                    'Học viên': s?.name || 'N/A', 'Phụ huynh': s?.parentName || 'N/A',
+                    'SĐT': s?.parentPhone || 'N/A', 'Môn': a.subject, 'Ngày': a.date, 'Giờ': a.time
                 };
             });
-            const ws2 = XLSX.utils.json_to_sheet(appointmentsData);
-            XLSX.utils.book_append_sheet(wb, ws2, 'Lịch Hẹn');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appointmentsData), 'Lịch Hẹn');
 
-            // Summary Sheet
-            const summaryData = [
-                { 'Chỉ số': 'Tổng học viên', 'Giá trị': students.length },
-                { 'Chỉ số': 'Tổng lịch hẹn', 'Giá trị': appointments.length },
-                { 'Chỉ số': 'Lịch hẹn sắp tới', 'Giá trị': getUpcomingAppointments().length },
-                { 'Chỉ số': 'Lịch hẹn đã qua', 'Giá trị': appointments.length - getUpcomingAppointments().length }
-            ];
-            const ws3 = XLSX.utils.json_to_sheet(summaryData);
-            XLSX.utils.book_append_sheet(wb, ws3, 'Tổng Quan');
+            const receiptsData = receipts.map(r => {
+                const s = students.find(st => st.id === r.studentId);
+                return {
+                    'Loại': r.type, 'Học viên': s?.name || 'N/A', 'Phụ huynh': r.parentName,
+                    'Nội dung': r.description, 'Số tiền': r.amount, 'Ngày': r.date
+                };
+            });
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(receiptsData), 'Biên Lai');
 
-            const fileName = `BaoCao_HocVien_${formatDateForFile()}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-            showNotification(`✅ Đã xuất file: ${fileName}`, 'success');
+            XLSX.writeFile(wb, `BaoCao_${formatDateForFile()}.xlsx`);
+            showNotification('✅ Đã xuất Excel!', 'success');
         }
 
         function exportStudentsToExcel() {
-            if (students.length === 0) {
-                showNotification('Không có học viên nào để xuất!', 'error');
-                return;
-            }
-
-            const studentsData = students.map(s => ({
-                'Tên học viên': s.name,
-                'Tuổi': s.age,
-                'Phụ huynh': s.parentName,
-                'Số điện thoại': s.parentPhone,
-                'Email': s.parentEmail || '',
-                'Môn học': s.subjects.join(', '),
-                'Số lịch hẹn': appointments.filter(a => a.studentId === s.id).length,
-                'Ghi chú': s.notes || '',
-                'Ngày tạo': formatDateTime(s.createdAt)
+            const data = students.map(s => ({
+                'Tên': s.name, 'Tuổi': s.age, 'Phụ huynh': s.parentName, 'SĐT': s.parentPhone,
+                'Email': s.parentEmail || '', 'Môn học': s.subjects.join(', ')
             }));
-
             const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(studentsData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Danh Sách Học Viên');
-
-            const fileName = `DanhSachHocVien_${formatDateForFile()}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-            showNotification(`✅ Đã xuất file: ${fileName}`, 'success');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), 'Học Viên');
+            XLSX.writeFile(wb, `HocVien_${formatDateForFile()}.xlsx`);
+            showNotification('✅ Đã xuất!', 'success');
         }
 
         function exportAppointmentsToExcel() {
-            if (appointments.length === 0) {
-                showNotification('Không có lịch hẹn nào để xuất!', 'error');
-                return;
-            }
-
-            const appointmentsData = appointments.map(a => {
-                const student = students.find(s => s.id === a.studentId);
-                const isPast = new Date(a.date + ' ' + a.time) < new Date();
+            const data = appointments.map(a => {
+                const s = students.find(st => st.id === a.studentId);
                 return {
-                    'Học viên': student?.name || 'N/A',
-                    'Tuổi': student?.age || 'N/A',
-                    'Phụ huynh': student?.parentName || 'N/A',
-                    'Số điện thoại': student?.parentPhone || 'N/A',
-                    'Email': student?.parentEmail || '',
-                    'Môn học': a.subject,
-                    'Ngày hẹn': a.date,
-                    'Giờ hẹn': a.time,
-                    'Trạng thái': isPast ? 'Đã qua' : 'Sắp tới',
-                    'Ghi chú': a.notes || '',
-                    'Ngày tạo lịch': formatDateTime(a.createdAt)
+                    'Học viên': s?.name || 'N/A', 'Phụ huynh': s?.parentName || 'N/A',
+                    'SĐT': s?.parentPhone || 'N/A', 'Môn': a.subject, 'Ngày': a.date, 'Giờ': a.time
                 };
             });
-
             const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.json_to_sheet(appointmentsData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Lịch Hẹn');
-
-            const fileName = `LichHen_${formatDateForFile()}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-            showNotification(`✅ Đã xuất file: ${fileName}`, 'success');
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), 'Lịch Hẹn');
+            XLSX.writeFile(wb, `LichHen_${formatDateForFile()}.xlsx`);
+            showNotification('✅ Đã xuất!', 'success');
         }
 
-        function exportDetailedReport() {
-            if (students.length === 0) {
-                showNotification('Không có dữ liệu để xuất!', 'error');
-                return;
-            }
-
-            const wb = XLSX.utils.book_new();
-
-            const detailedData = students.map(s => {
-                const studentAppointments = appointments.filter(a => a.studentId === s.id);
-                const upcomingCount = studentAppointments.filter(a => 
-                    new Date(a.date + ' ' + a.time) >= new Date()
-                ).length;
-
+        function exportReceiptsToExcel() {
+            const data = receipts.map(r => {
+                const s = students.find(st => st.id === r.studentId);
                 return {
-                    'Tên học viên': s.name,
-                    'Tuổi': s.age,
-                    'Phụ huynh': s.parentName,
-                    'Số điện thoại': s.parentPhone,
-                    'Email': s.parentEmail || '',
-                    'Môn học quan tâm': s.subjects.join(', '),
-                    'Tổng lịch hẹn': studentAppointments.length,
-                    'Lịch hẹn sắp tới': upcomingCount,
-                    'Lịch hẹn đã qua': studentAppointments.length - upcomingCount,
-                    'Ghi chú': s.notes || '',
-                    'Ngày đăng ký': formatDateTime(s.createdAt)
+                    'Loại': r.type, 'Học viên': s?.name || 'N/A', 'Phụ huynh': r.parentName,
+                    'Nội dung': r.description, 'Số tiền': r.amount, 'Ngày': r.date
                 };
             });
-
-            const ws = XLSX.utils.json_to_sheet(detailedData);
-            XLSX.utils.book_append_sheet(wb, ws, 'Báo Cáo Chi Tiết');
-
-            const fileName = `BaoCaoChiTiet_${formatDateForFile()}.xlsx`;
-            XLSX.writeFile(wb, fileName);
-            showNotification(`✅ Đã xuất file: ${fileName}`, 'success');
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), 'Biên Lai');
+            XLSX.writeFile(wb, `BienLai_${formatDateForFile()}.xlsx`);
+            showNotification('✅ Đã xuất!', 'success');
         }
 
         function exportBackupJSON() {
             const backup = {
-                version: '3.0',
+                version: '4.0',
                 exportDate: new Date().toISOString(),
-                data: {
-                    students: students,
-                    appointments: appointments
-                }
+                data: { students, appointments, receipts, centerInfo, bankInfo }
             };
-
-            const dataStr = JSON.stringify(backup, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Backup_HocVien_${formatDateForFile()}.json`;
+            link.download = `Backup_${formatDateForFile()}.json`;
             link.click();
             URL.revokeObjectURL(url);
-
-            showNotification('✅ Đã tải file backup JSON!', 'success');
+            showNotification('✅ Đã tải backup!', 'success');
         }
 
         function restoreFromJSON(event) {
@@ -1821,24 +1887,26 @@ Vui lòng đến đúng giờ. Cảm ơn quý phụ huynh!
             reader.onload = function(e) {
                 try {
                     const backup = JSON.parse(e.target.result);
-                    
-                    if (!backup.data || !backup.data.students || !backup.data.appointments) {
-                        throw new Error('File không đúng định dạng!');
-                    }
+                    if (!backup.data) throw new Error('File không hợp lệ!');
 
-                    if (!confirm('Bạn có chắc muốn khôi phục dữ liệu từ file này? Dữ liệu hiện tại sẽ bị ghi đè!')) {
-                        return;
-                    }
+                    if (!confirm('Khôi phục từ backup? Dữ liệu hiện tại sẽ bị ghi đè!')) return;
 
-                    students = backup.data.students;
-                    appointments = backup.data.appointments;
+                    students = backup.data.students || [];
+                    appointments = backup.data.appointments || [];
+                    receipts = backup.data.receipts || [];
+                    centerInfo = backup.data.centerInfo || {};
+                    bankInfo = backup.data.bankInfo || {};
 
                     localStorage.setItem('students', JSON.stringify(students));
                     localStorage.setItem('appointments', JSON.stringify(appointments));
-                    createAutoBackup();
+                    localStorage.setItem('receipts', JSON.stringify(receipts));
+                    localStorage.setItem('centerInfo', JSON.stringify(centerInfo));
+                    localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
 
                     renderAll();
-                    showNotification('✅ Khôi phục dữ liệu thành công!', 'success');
+                    loadCenterInfo();
+                    loadBankInfo();
+                    showNotification('✅ Khôi phục thành công!', 'success');
                 } catch (error) {
                     showNotification('❌ Lỗi: ' + error.message, 'error');
                 }
@@ -1848,34 +1916,26 @@ Vui lòng đến đúng giờ. Cảm ơn quý phụ huynh!
         }
 
         function clearAllData() {
-            const confirmed = confirm('⚠️ CẢNH BÁO: Bạn có chắc muốn xóa toàn bộ dữ liệu?\n\nHành động này KHÔNG THỂ HOÀN TÁC!\n\nNhấn OK để xác nhận xóa.');
-            
-            if (!confirmed) return;
+            if (!confirm('⚠️ XÓA TOÀN BỘ DỮ LIỆU? KHÔNG THỂ HOÀN TÁC!')) return;
+            const confirm2 = prompt('Nhập "XOA" để xác nhận:');
+            if (confirm2 !== 'XOA') return;
 
-            const doubleConfirm = prompt('Để xác nhận, vui lòng nhập từ "XOA" (viết hoa):');
-            
-            if (doubleConfirm !== 'XOA') {
-                showNotification('Đã hủy thao tác xóa', 'info');
-                return;
-            }
-
-            localStorage.removeItem('students');
-            localStorage.removeItem('appointments');
-            localStorage.removeItem('backupHistory');
-            
+            localStorage.clear();
             students = [];
             appointments = [];
+            receipts = [];
+            centerInfo = {};
+            bankInfo = {};
             backupHistory = [];
 
             renderAll();
-            showNotification('✅ Đã xóa toàn bộ dữ liệu!', 'success');
+            showNotification('✅ Đã xóa toàn bộ!', 'success');
         }
 
         // Helper Functions
         function getUpcomingAppointments() {
             const now = new Date();
-            return appointments
-                .filter(apt => new Date(apt.date + ' ' + apt.time) >= now)
+            return appointments.filter(apt => new Date(apt.date + ' ' + apt.time) >= now)
                 .sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time));
         }
 
@@ -1885,15 +1945,70 @@ Vui lòng đến đúng giờ. Cảm ơn quý phụ huynh!
             return `${days[date.getDay()]} ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
         }
 
-        function formatDateTime(isoString) {
-            const date = new Date(isoString);
-            return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-        }
-
         function formatDateForFile() {
             const now = new Date();
-            return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`;
+            return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
         }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        function numberToWords(num) {
+            if (num === 0) return 'Không đồng';
+            const ones = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+            const tens = ['', 'mười', 'hai mươi', 'ba mươi', 'bốn mươi', 'năm mươi', 'sáu mươi', 'bảy mươi', 'tám mươi', 'chín mươi'];
+            
+            function convertThreeDigits(n) {
+                if (n === 0) return '';
+                let result = '';
+                const hundred = Math.floor(n / 100);
+                const remainder = n % 100;
+                const ten = Math.floor(remainder / 10);
+                const one = remainder % 10;
+                
+                if (hundred > 0) result += ones[hundred] + ' trăm ';
+                if (ten >= 2) {
+                    result += tens[ten] + ' ';
+                    if (one > 0) result += ones[one] + ' ';
+                } else if (ten === 1) {
+                    result += 'mười ';
+                    if (one > 0) result += ones[one] + ' ';
+                } else if (one > 0 && hundred > 0) {
+                    result += 'lẻ ' + ones[one] + ' ';
+                } else if (one > 0) {
+                    result += ones[one] + ' ';
+                }
+                return result;
+            }
+            
+            let result = '';
+            const billion = Math.floor(num / 1000000000);
+            const million = Math.floor((num % 1000000000) / 1000000);
+            const thousand = Math.floor((num % 1000000) / 1000);
+            const remainder = num % 1000;
+            
+            if (billion > 0) result += convertThreeDigits(billion) + 'tỷ ';
+            if (million > 0) result += convertThreeDigits(million) + 'triệu ';
+            if (thousand > 0) result += convertThreeDigits(thousand) + 'nghìn ';
+            if (remainder > 0) result += convertThreeDigits(remainder);
+            
+            return (result.trim() + ' đồng').replace(/\s+/g, ' ');
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            ['searchStudent', 'searchAppointment', 'searchReceipt'].forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('input', function() {
+                        if (id === 'searchStudent') renderStudentsList();
+                        if (id === 'searchAppointment') renderAppointmentsList();
+                        if (id === 'searchReceipt') renderReceiptsList();
+                    });
+                }
+            });
+        });
     </script>
 </body>
 </html>
