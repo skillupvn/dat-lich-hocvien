@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Học Viên - Giai Đoạn 1 Hoàn Chỉnh</title>
+    <title>Quản Lý Học Viên - V2.0 Complete (Học Thử + Đăng Ký + Danh Mục)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -957,8 +957,11 @@
             <button class="tab active" onclick="switchTab('dashboard')">📊 Tổng Quan</button>
             <button class="tab" onclick="switchTab('add-student')">➕ Học Viên</button>
             <button class="tab" onclick="switchTab('students')">👥 DS Học Viên</button>
+            <button class="tab" onclick="switchTab('trialStudents')">🎓 Học Thử</button>
+            <button class="tab" onclick="switchTab('registeredStudents')">✅ Đã Đăng Ký</button>
             <button class="tab" onclick="switchTab('appointments')">📅 Lịch Hẹn</button>
             <button class="tab" onclick="switchTab('receipts')">🧾 Biên Lai</button>
+            <button class="tab" onclick="switchTab('categories')">📚 Danh Mục</button>
             <button class="tab" onclick="switchTab('export')">📤 Xuất Data</button>
             <button class="tab" onclick="switchTab('settings')">⚙️ Cài Đặt</button>
         </div>
@@ -1055,6 +1058,57 @@
                 <div id="students-list"></div>
             </div>
 
+
+            <!-- TAB MỚI: HỌC THỬ -->
+            <div id="trialStudents" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #667eea;">🎓 Danh Sách Học Thử</h2>
+                <div class="search-box">
+                    <input type="text" id="searchTrialStudent" placeholder="🔍 Tìm kiếm học viên học thử..." oninput="filterTrialStudents()">
+                </div>
+                <div class="search-results" id="trialStudentSearchResults"></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên HV</th>
+                                <th>Tuổi</th>
+                                <th>Phụ Huynh</th>
+                                <th>SĐT</th>
+                                <th>Môn Học</th>
+                                <th>Trạng Thái</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trialStudentsList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB MỚI: ĐÃ ĐĂNG KÝ -->
+            <div id="registeredStudents" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #667eea;">✅ Danh Sách Đã Đăng Ký</h2>
+                <div class="search-box">
+                    <input type="text" id="searchRegisteredStudent" placeholder="🔍 Tìm kiếm học viên đã đăng ký..." oninput="filterRegisteredStudents()">
+                </div>
+                <div class="search-results" id="registeredStudentSearchResults"></div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tên HV</th>
+                                <th>Tuổi</th>
+                                <th>Phụ Huynh</th>
+                                <th>SĐT</th>
+                                <th>Môn Học</th>
+                                <th>Trạng Thái</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registeredStudentsList"></tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Appointments Tab -->
             <div id="appointments" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
@@ -1074,6 +1128,76 @@
                     </div>
                 </div>
                 <div id="receipts-list"></div>
+            </div>
+
+
+            <!-- TAB MỚI: DANH MỤC -->
+            <div id="categories" class="tab-content">
+                <h2 style="margin-bottom: 20px; color: #667eea;">📚 Quản Lý Danh Mục</h2>
+                <div style="display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;">
+                    <button class="btn btn-info" onclick="showCategoryTab('subjects')">📖 Môn Học</button>
+                    <button class="btn btn-info" onclick="showCategoryTab('packages')">📦 Gói Học Phí</button>
+                    <button class="btn btn-info" onclick="showCategoryTab('promotions')">🎁 Khuyến Mãi</button>
+                </div>
+
+                <div id="subjectsCategory" class="category-subtab">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">📖 Danh Sách Môn Học</h3>
+                    <button class="btn btn-success" style="margin-bottom: 15px;" onclick="showAddSubjectModal()">➕ Thêm Môn Học</button>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Tên Môn</th>
+                                    <th>Học Phí Mặc Định</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="subjectsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="packagesCategory" class="category-subtab" style="display: none;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">📦 Danh Sách Gói Học Phí</h3>
+                    <button class="btn btn-success" style="margin-bottom: 15px;" onclick="showAddPackageModal()">➕ Thêm Gói</button>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tên Gói</th>
+                                    <th>Môn Học</th>
+                                    <th>Số Buổi</th>
+                                    <th>Học Phí</th>
+                                    <th>Ghi Chú</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="packagesList"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="promotionsCategory" class="category-subtab" style="display: none;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">🎁 Danh Sách Khuyến Mãi</h3>
+                    <button class="btn btn-success" style="margin-bottom: 15px;" onclick="showAddPromotionModal()">➕ Thêm KM</button>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tên KM</th>
+                                    <th>Loại</th>
+                                    <th>Giá Trị</th>
+                                    <th>Áp Dụng Cho</th>
+                                    <th>Thời Hạn</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="promotionsList"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Export Tab -->
@@ -2716,5 +2840,989 @@
             return finalResult.replace(/\s+/g, ' ');
         }
     </script>
+
+<script>
+// ==========================================
+// 🆕 ADDON FEATURES V2.0
+// ==========================================
+/*
+ * ========================================
+ * ADDON FEATURES FOR APP V2.0
+ * Tính năng mới: Danh mục, Trạng thái HV, Phiếu Đăng Ký
+ * ========================================
+ */
+
+// ==========================================
+// 📊 NEW DATA STRUCTURES
+// ==========================================
+
+// Subjects: Môn học với học phí mặc định
+let subjects = JSON.parse(localStorage.getItem('subjects')) || [
+    {id: 1, name: "Cờ Vua", emoji: "♟️", defaultFee: 2000000},
+    {id: 2, name: "Vẽ Tranh", emoji: "🎨", defaultFee: 1800000},
+    {id: 3, name: "Tiền Tiểu Học", emoji: "📚", defaultFee: 1500000},
+    {id: 4, name: "Rèn Chữ", emoji: "✍️", defaultFee: 1600000}
+];
+
+// Tuition Packages: Gói học phí theo môn
+let tuitionPackages = JSON.parse(localStorage.getItem('tuitionPackages')) || [];
+
+// Promotions: Khuyến mãi
+let promotions = JSON.parse(localStorage.getItem('promotions')) || [];
+
+// Registration: Phiếu đăng ký
+// students[] sẽ có thêm fields: status, registrations[]
+
+// ==========================================
+// 🎨 HELPER FUNCTIONS
+// ==========================================
+
+function saveSubjects() {
+    localStorage.setItem('subjects', JSON.stringify(subjects));
+    renderSubjectDropdowns();
+}
+
+function saveTuitionPackages() {
+    localStorage.setItem('tuitionPackages', JSON.stringify(tuitionPackages));
+}
+
+function savePromotions() {
+    localStorage.setItem('promotions', JSON.stringify(promotions));
+}
+
+function getActivePromotions() {
+    const now = new Date();
+    return promotions.filter(promo => {
+        const endDate = new Date(promo.endDate);
+        return endDate >= now;
+    });
+}
+
+function calculateDiscount(tuitionFee, selectedPromotions) {
+    let totalDiscount = 0;
+    selectedPromotions.forEach(promoId => {
+        const promo = promotions.find(p => p.id === promoId);
+        if (promo) {
+            if (promo.type === 'percent') {
+                totalDiscount += (tuitionFee * promo.value / 100);
+            } else {
+                totalDiscount += promo.value;
+            }
+        }
+    });
+    return totalDiscount;
+}
+
+// ==========================================
+// 📚 CATEGORY TAB NAVIGATION
+// ==========================================
+
+function showCategoryTab(tab) {
+    document.querySelectorAll('.category-subtab').forEach(el => el.style.display = 'none');
+    document.getElementById(tab + 'Category').style.display = 'block';
+    
+    if (tab === 'subjects') renderSubjectsList();
+    if (tab === 'packages') renderPackagesList();
+    if (tab === 'promotions') renderPromotionsList();
+}
+
+// ==========================================
+// 📖 SUBJECTS MANAGEMENT
+// ==========================================
+
+function renderSubjectsList() {
+    const tbody = document.getElementById('subjectsList');
+    tbody.innerHTML = subjects.map(subject => `
+        <tr>
+            <td style="font-size: 2em;">${subject.emoji}</td>
+            <td>${subject.name}</td>
+            <td>${formatCurrency(subject.defaultFee)}</td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="editSubject(${subject.id})">✏️ Sửa</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteSubject(${subject.id})">🗑️ Xóa</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function showAddSubjectModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Thêm Môn Học</h2>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <form onsubmit="addSubject(event); this.closest('.modal').remove();">
+                <div class="form-group">
+                    <label>Tên Môn Học</label>
+                    <input type="text" id="newSubjectName" required>
+                </div>
+                <div class="form-group">
+                    <label>Icon Emoji</label>
+                    <input type="text" id="newSubjectEmoji" placeholder="🎨" required>
+                </div>
+                <div class="form-group">
+                    <label>Học Phí Mặc Định (VNĐ)</label>
+                    <input type="number" id="newSubjectFee" required min="0" step="10000">
+                </div>
+                <button type="submit" class="btn btn-primary">💾 Lưu</button>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function addSubject(event) {
+    event.preventDefault();
+    const newSubject = {
+        id: Date.now(),
+        name: document.getElementById('newSubjectName').value,
+        emoji: document.getElementById('newSubjectEmoji').value,
+        defaultFee: parseInt(document.getElementById('newSubjectFee').value)
+    };
+    subjects.push(newSubject);
+    saveSubjects();
+    renderSubjectsList();
+    showToast('✅ Đã thêm môn học mới!');
+}
+
+function deleteSubject(id) {
+    if (confirm('Xóa môn học này?')) {
+        subjects = subjects.filter(s => s.id !== id);
+        saveSubjects();
+        renderSubjectsList();
+        showToast('✅ Đã xóa môn học!');
+    }
+}
+
+function renderSubjectDropdowns() {
+    // Update tất cả dropdown môn học trong form
+    const dropdown = document.getElementById('studentSubjects');
+    if (dropdown) {
+        dropdown.innerHTML = subjects.map(s => 
+            `<option value="${s.name}">${s.emoji} ${s.name}</option>`
+        ).join('');
+    }
+}
+
+// ==========================================
+// 📦 TUITION PACKAGES MANAGEMENT
+// ==========================================
+
+function renderPackagesList() {
+    const tbody = document.getElementById('packagesList');
+    if (!tbody) return;
+    
+    tbody.innerHTML = tuitionPackages.map(pkg => `
+        <tr>
+            <td>${pkg.name}</td>
+            <td>${pkg.subjectName}</td>
+            <td>${pkg.sessions} buổi</td>
+            <td>${formatCurrency(pkg.fee)}</td>
+            <td>${pkg.notes || ''}</td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="editPackage(${pkg.id})">✏️ Sửa</button>
+                <button class="btn btn-danger btn-sm" onclick="deletePackage(${pkg.id})">🗑️ Xóa</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function showAddPackageModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Thêm Gói Học Phí</h2>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <form onsubmit="addPackage(event); this.closest('.modal').remove();">
+                <div class="form-group">
+                    <label>Tên Gói</label>
+                    <input type="text" id="newPackageName" placeholder="Gói Cơ Bản" required>
+                </div>
+                <div class="form-group">
+                    <label>Môn Học</label>
+                    <select id="newPackageSubject" required>
+                        ${subjects.map(s => `<option value="${s.name}">${s.emoji} ${s.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Số Buổi Học</label>
+                    <input type="number" id="newPackageSessions" required min="1" value="8">
+                </div>
+                <div class="form-group">
+                    <label>Học Phí (VNĐ)</label>
+                    <input type="number" id="newPackageFee" required min="0" step="10000">
+                </div>
+                <div class="form-group">
+                    <label>Ghi Chú</label>
+                    <textarea id="newPackageNotes" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">💾 Lưu</button>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function addPackage(event) {
+    event.preventDefault();
+    const newPackage = {
+        id: Date.now(),
+        name: document.getElementById('newPackageName').value,
+        subjectName: document.getElementById('newPackageSubject').value,
+        sessions: parseInt(document.getElementById('newPackageSessions').value),
+        fee: parseInt(document.getElementById('newPackageFee').value),
+        notes: document.getElementById('newPackageNotes').value
+    };
+    tuitionPackages.push(newPackage);
+    saveTuitionPackages();
+    renderPackagesList();
+    showToast('✅ Đã thêm gói học phí!');
+}
+
+function deletePackage(id) {
+    if (confirm('Xóa gói học phí này?')) {
+        tuitionPackages = tuitionPackages.filter(p => p.id !== id);
+        saveTuitionPackages();
+        renderPackagesList();
+        showToast('✅ Đã xóa gói học phí!');
+    }
+}
+
+// ==========================================
+// 🎁 PROMOTIONS MANAGEMENT
+// ==========================================
+
+function renderPromotionsList() {
+    const tbody = document.getElementById('promotionsList');
+    if (!tbody) return;
+    
+    const now = new Date();
+    tbody.innerHTML = promotions.map(promo => {
+        const endDate = new Date(promo.endDate);
+        const isExpired = endDate < now;
+        const typeText = promo.type === 'percent' ? '%' : 'VNĐ';
+        const valueDisplay = promo.type === 'percent' ? `${promo.value}%` : formatCurrency(promo.value);
+        
+        return `
+        <tr style="${isExpired ? 'opacity: 0.5;' : ''}">
+            <td>${promo.name}</td>
+            <td>${typeText}</td>
+            <td>${valueDisplay}</td>
+            <td>${promo.appliedSubjects.join(', ')}</td>
+            <td>${formatDate(promo.startDate)} - ${formatDate(promo.endDate)}</td>
+            <td><span class="status-badge ${isExpired ? 'trial' : 'registered'}">${isExpired ? 'Hết hạn' : 'Hoạt động'}</span></td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="editPromotion(${promo.id})">✏️ Sửa</button>
+                <button class="btn btn-danger btn-sm" onclick="deletePromotion(${promo.id})">🗑️ Xóa</button>
+            </td>
+        </tr>
+        `;
+    }).join('');
+}
+
+function showAddPromotionModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Thêm Khuyến Mãi</h2>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <form onsubmit="addPromotion(event); this.closest('.modal').remove();">
+                <div class="form-group">
+                    <label>Tên Khuyến Mãi</label>
+                    <input type="text" id="newPromoName" placeholder="KM khai trương" required>
+                </div>
+                <div class="form-group">
+                    <label>Loại Giảm Giá</label>
+                    <div>
+                        <label><input type="radio" name="promoType" value="percent" checked> Giảm theo %</label>
+                        <label style="margin-left: 20px;"><input type="radio" name="promoType" value="fixed"> Giảm theo VNĐ</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Giá Trị</label>
+                    <input type="number" id="newPromoValue" required min="0" placeholder="10 (nếu %) hoặc 200000 (nếu VNĐ)">
+                </div>
+                <div class="form-group">
+                    <label>Áp Dụng Cho Môn</label>
+                    <select id="newPromoSubjects" multiple size="4" style="height: 120px;">
+                        ${subjects.map(s => `<option value="${s.name}">${s.emoji} ${s.name}</option>`).join('')}
+                        <option value="Tất cả">✅ Tất cả</option>
+                    </select>
+                    <small style="color: #666; display: block; margin-top: 5px;">Giữ Ctrl để chọn nhiều môn</small>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Từ Ngày</label>
+                        <input type="date" id="newPromoStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Đến Ngày</label>
+                        <input type="date" id="newPromoEndDate" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">💾 Lưu</button>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Set default dates
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('newPromoStartDate').value = today;
+}
+
+function addPromotion(event) {
+    event.preventDefault();
+    const selectedSubjects = Array.from(document.getElementById('newPromoSubjects').selectedOptions).map(opt => opt.value);
+    
+    const newPromo = {
+        id: Date.now(),
+        name: document.getElementById('newPromoName').value,
+        type: document.querySelector('input[name="promoType"]:checked').value,
+        value: parseFloat(document.getElementById('newPromoValue').value),
+        appliedSubjects: selectedSubjects,
+        startDate: document.getElementById('newPromoStartDate').value,
+        endDate: document.getElementById('newPromoEndDate').value
+    };
+    
+    promotions.push(newPromo);
+    savePromotions();
+    renderPromotionsList();
+    showToast('✅ Đã thêm khuyến mãi!');
+}
+
+function deletePromotion(id) {
+    if (confirm('Xóa khuyến mãi này?')) {
+        promotions = promotions.filter(p => p.id !== id);
+        savePromotions();
+        renderPromotionsList();
+        showToast('✅ Đã xóa khuyến mãi!');
+    }
+}
+
+// ==========================================
+// 🎓 STUDENT STATUS MANAGEMENT
+// ==========================================
+
+// Migrate existing students to add status field
+function migrateStudents() {
+    students.forEach(student => {
+        if (!student.status) {
+            student.status = "Học Thử"; // Default: trial
+        }
+        if (!student.registrations) {
+            student.registrations = [];
+        }
+    });
+    saveStudents();
+}
+
+function renderTrialStudents() {
+    const tbody = document.getElementById('trialStudentsList');
+    if (!tbody) return;
+    
+    const trialStudents = students.filter(s => s.status === "Học Thử");
+    tbody.innerHTML = trialStudents.map(student => `
+        <tr>
+            <td>${student.name}</td>
+            <td>${student.age}</td>
+            <td>${student.parentName}</td>
+            <td>${student.parentPhone}</td>
+            <td>${student.subjects.map(s => `<span class="subject-tag">${s}</span>`).join('')}</td>
+            <td><span class="status-badge trial">Học Thử</span></td>
+            <td>
+                <button class="btn btn-info btn-sm" onclick="showQuickView(${student.id})">👁️ Xem</button>
+                <button class="btn btn-success btn-sm" onclick="showRegisterModal(${student.id})">✅ Chuyển Đăng Ký</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">🗑️ Xóa</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function renderRegisteredStudents() {
+    const tbody = document.getElementById('registeredStudentsList');
+    if (!tbody) return;
+    
+    const regStudents = students.filter(s => s.status === "Đã Đăng Ký");
+    tbody.innerHTML = regStudents.map(student => `
+        <tr>
+            <td>${student.name}</td>
+            <td>${student.age}</td>
+            <td>${student.parentName}</td>
+            <td>${student.parentPhone}</td>
+            <td>${student.subjects.map(s => `<span class="subject-tag">${s}</span>`).join('')}</td>
+            <td><span class="status-badge registered">Đã Đăng Ký</span></td>
+            <td>
+                <button class="btn btn-info btn-sm" onclick="showQuickView(${student.id})">👁️ Xem</button>
+                <button class="btn btn-warning btn-sm" onclick="showRegistrationList(${student.id})">📄 Phiếu ĐK</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">🗑️ Xóa</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ==========================================
+// 📄 REGISTRATION (PHIẾU ĐĂNG KÝ)
+// ==========================================
+
+function showRegisterModal(studentId) {
+    const student = students.find(s => s.id === studentId);
+    if (!student) return;
+    
+    const activePromos = getActivePromotions();
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>✅ Chuyển Sang Đăng Ký</h2>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            <form onsubmit="registerStudent(event, ${studentId}); this.closest('.modal').remove();">
+                <div class="form-group">
+                    <label>Học Viên: <strong>${student.name}</strong></label>
+                </div>
+                <div class="form-group">
+                    <label>Môn Học</label>
+                    <select id="regSubject" required onchange="loadPackages(this.value)">
+                        ${student.subjects.map(s => `<option value="${s}">${s}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Gói Học Phí</label>
+                    <select id="regPackage" onchange="fillTuitionFromPackage()">
+                        <option value="">-- Nhập thủ công --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Học Phí (VNĐ)</label>
+                    <input type="number" id="regTuition" required min="0" step="10000" oninput="calculateTotal()">
+                </div>
+                <div class="form-group">
+                    <label>Khuyến Mãi (tick chọn nhiều)</label>
+                    <div class="promotion-list" id="promoList">
+                        ${activePromos.length === 0 ? '<p style="color: #666;">Không có khuyến mãi đang hoạt động</p>' : 
+                        activePromos.map(promo => `
+                            <div class="promotion-item">
+                                <label>
+                                    <input type="checkbox" name="selectedPromos" value="${promo.id}" onchange="calculateTotal()">
+                                    <strong>${promo.name}</strong> - 
+                                    ${promo.type === 'percent' ? `${promo.value}%` : formatCurrency(promo.value)}
+                                    (${formatDate(promo.startDate)} - ${formatDate(promo.endDate)})
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Tổng Giảm Giá</label>
+                    <input type="text" id="regDiscount" readonly style="background: #f8f9fa; font-weight: 600; color: #dc3545;">
+                </div>
+                <div class="form-group">
+                    <label>Thành Tiền</label>
+                    <input type="text" id="regFinalAmount" readonly style="background: #e7f3ff; font-weight: 600; font-size: 1.2em; color: #0066cc;">
+                </div>
+                <button type="submit" class="btn btn-primary">💾 Xác Nhận Đăng Ký</button>
+            </form>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Load packages for first subject
+    loadPackages(student.subjects[0]);
+}
+
+function loadPackages(subjectName) {
+    const packages = tuitionPackages.filter(p => p.subjectName === subjectName);
+    const select = document.getElementById('regPackage');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">-- Nhập thủ công --</option>' + 
+        packages.map(pkg => `<option value="${pkg.id}">${pkg.name} - ${pkg.sessions} buổi - ${formatCurrency(pkg.fee)}</option>`).join('');
+}
+
+function fillTuitionFromPackage() {
+    const select = document.getElementById('regPackage');
+    const tuitionInput = document.getElementById('regTuition');
+    if (!select || !tuitionInput) return;
+    
+    const packageId = parseInt(select.value);
+    if (packageId) {
+        const pkg = tuitionPackages.find(p => p.id === packageId);
+        if (pkg) {
+            tuitionInput.value = pkg.fee;
+            calculateTotal();
+        }
+    }
+}
+
+function calculateTotal() {
+    const tuitionInput = document.getElementById('regTuition');
+    const discountInput = document.getElementById('regDiscount');
+    const finalInput = document.getElementById('regFinalAmount');
+    
+    if (!tuitionInput || !discountInput || !finalInput) return;
+    
+    const tuition = parseInt(tuitionInput.value) || 0;
+    const selectedPromos = Array.from(document.querySelectorAll('input[name="selectedPromos"]:checked')).map(cb => parseInt(cb.value));
+    
+    const totalDiscount = calculateDiscount(tuition, selectedPromos);
+    const finalAmount = tuition - totalDiscount;
+    
+    discountInput.value = `-${formatCurrency(totalDiscount)}`;
+    finalInput.value = formatCurrency(finalAmount);
+}
+
+function registerStudent(event, studentId) {
+    event.preventDefault();
+    
+    const student = students.find(s => s.id === studentId);
+    if (!student) return;
+    
+    const subject = document.getElementById('regSubject').value;
+    const tuition = parseInt(document.getElementById('regTuition').value);
+    const selectedPromos = Array.from(document.querySelectorAll('input[name="selectedPromos"]:checked')).map(cb => parseInt(cb.value));
+    const totalDiscount = calculateDiscount(tuition, selectedPromos);
+    const finalAmount = tuition - totalDiscount;
+    
+    // Create registration
+    const registration = {
+        id: Date.now(),
+        studentId: studentId,
+        subject: subject,
+        registrationDate: new Date().toISOString().split('T')[0],
+        tuitionFee: tuition,
+        promotionIds: selectedPromos,
+        discountAmount: totalDiscount,
+        finalAmount: finalAmount,
+        status: "Đã đăng ký thành công",
+        qrCode: generateRegistrationQRData(student, subject, finalAmount),
+        createdAt: new Date().toISOString()
+    };
+    
+    // Update student
+    student.status = "Đã Đăng Ký";
+    if (!student.registrations) student.registrations = [];
+    student.registrations.push(registration);
+    
+    saveStudents();
+    renderTrialStudents();
+    renderRegisteredStudents();
+    updateDashboard();
+    
+    showToast('✅ Đã chuyển sang đăng ký thành công!');
+}
+
+function generateRegistrationQRData(student, subject, finalAmount) {
+    return `Mã ĐK: #DK${student.id}\nTên HV: ${student.name}\nMôn học: ${subject}\nNgày đăng ký: ${formatDate(new Date().toISOString().split('T')[0])}\nSố tiền: ${formatCurrency(finalAmount)}\nTrạng thái: Đã đăng ký thành công`;
+}
+
+// ==========================================
+// 👁️ QUICK VIEW MODAL
+// ==========================================
+
+function showQuickView(studentId) {
+    const student = students.find(s => s.id === studentId);
+    if (!student) return;
+    
+    // Get related data
+    const studentAppointments = appointments.filter(a => a.studentId === studentId);
+    const studentReceipts = receipts.filter(r => r.studentId === studentId);
+    const studentRegistrations = student.registrations || [];
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>👁️ Xem Nhanh: ${student.name}</h2>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            
+            <!-- Thông tin HV -->
+            <div class="quick-view-section">
+                <h3>👤 Thông Tin Học Viên</h3>
+                <p><strong>Tên:</strong> ${student.name}</p>
+                <p><strong>Tuổi:</strong> ${student.age}</p>
+                <p><strong>Phụ huynh:</strong> ${student.parentName}</p>
+                <p><strong>SĐT:</strong> ${student.parentPhone}</p>
+                <p><strong>Email:</strong> ${student.parentEmail || 'Chưa có'}</p>
+                <p><strong>Môn học:</strong> ${student.subjects.map(s => `<span class="subject-tag">${s}</span>`).join('')}</p>
+                <p><strong>Trạng thái:</strong> <span class="status-badge ${student.status === 'Học Thử' ? 'trial' : 'registered'}">${student.status}</span></p>
+                <p><strong>Ghi chú:</strong> ${student.notes || 'Không có'}</p>
+            </div>
+            
+            <!-- Lịch hẹn -->
+            <div class="quick-view-section">
+                <h3>📅 Lịch Sử Lịch Hẹn (${studentAppointments.length})</h3>
+                ${studentAppointments.length === 0 ? '<p style="color: #666;">Chưa có lịch hẹn</p>' : 
+                    studentAppointments.map(apt => `
+                        <p>• ${apt.subject} - ${formatDate(apt.date)} ${apt.time} ${apt.notes ? `(${apt.notes})` : ''}</p>
+                    `).join('')
+                }
+            </div>
+            
+            <!-- Phiếu đăng ký -->
+            <div class="quick-view-section">
+                <h3>📄 Lịch Sử Phiếu Đăng Ký (${studentRegistrations.length})</h3>
+                ${studentRegistrations.length === 0 ? '<p style="color: #666;">Chưa có phiếu đăng ký</p>' :
+                    studentRegistrations.map(reg => `
+                        <p>• ${reg.subject} - ${formatDate(reg.registrationDate)} - ${formatCurrency(reg.finalAmount)}</p>
+                    `).join('')
+                }
+            </div>
+            
+            <!-- Biên lai -->
+            <div class="quick-view-section">
+                <h3>🧾 Lịch Sử Biên Lai (${studentReceipts.length})</h3>
+                ${studentReceipts.length === 0 ? '<p style="color: #666;">Chưa có biên lai</p>' :
+                    studentReceipts.map(rec => `
+                        <p>• ${rec.description} - ${formatCurrency(rec.amount)} - ${formatDate(rec.date)} (${rec.type})</p>
+                    `).join('')
+                }
+            </div>
+            
+            <button class="btn btn-primary" onclick="this.closest('.modal').remove()">✅ Đóng</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// ==========================================
+// 📄 REGISTRATION LIST & PRINT
+// ==========================================
+
+function showRegistrationList(studentId) {
+    const student = students.find(s => s.id === studentId);
+    if (!student || !student.registrations || student.registrations.length === 0) {
+        showToast('⚠️ Học viên chưa có phiếu đăng ký nào!', 'warning');
+        return;
+    }
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2>📄 Danh Sách Phiếu Đăng Ký: ${student.name}</h2>
+                <span class="close" onclick="this.closest('.modal').remove()">&times;</span>
+            </div>
+            
+            ${student.registrations.map(reg => {
+                const promoNames = reg.promotionIds.map(id => {
+                    const promo = promotions.find(p => p.id === id);
+                    return promo ? `${promo.name} (${promo.type === 'percent' ? promo.value + '%' : formatCurrency(promo.value)})` : '';
+                }).filter(n => n).join(', ');
+                
+                return `
+                <div class="registration-card">
+                    <div class="registration-card-header">
+                        <div>
+                            <strong>Mã: #DK${reg.id}</strong><br>
+                            <small>Ngày: ${formatDate(reg.registrationDate)}</small>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="printRegistration(${studentId}, ${reg.id})">🖨️ Xem/In Phiếu</button>
+                    </div>
+                    <p><strong>Môn học:</strong> ${reg.subject}</p>
+                    <p><strong>Học phí:</strong> ${formatCurrency(reg.tuitionFee)}</p>
+                    <p><strong>Khuyến mãi:</strong> ${promoNames || 'Không có'}</p>
+                    <p><strong>Giảm giá:</strong> -${formatCurrency(reg.discountAmount)}</p>
+                    <p><strong>Thành tiền:</strong> <span style="color: #0066cc; font-weight: 600;">${formatCurrency(reg.finalAmount)}</span></p>
+                </div>
+                `;
+            }).join('')}
+            
+            <button class="btn btn-info" onclick="this.closest('.modal').remove()">✅ Đóng</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function printRegistration(studentId, regId) {
+    const student = students.find(s => s.id === studentId);
+    if (!student) return;
+    
+    const reg = student.registrations.find(r => r.id === regId);
+    if (!reg) return;
+    
+    const promoDetails = reg.promotionIds.map(id => {
+        const promo = promotions.find(p => p.id === id);
+        if (!promo) return '';
+        const discount = promo.type === 'percent' ? 
+            `-${promo.value}% (-${formatCurrency(reg.tuitionFee * promo.value / 100)})` :
+            `-${formatCurrency(promo.value)}`;
+        return `• ${promo.name}: ${discount}`;
+    }).filter(d => d).join('<br>');
+    
+    // Generate QR Code
+    const qrContainer = document.createElement('div');
+    qrContainer.style.display = 'none';
+    document.body.appendChild(qrContainer);
+    
+    const qr = new QRCode(qrContainer, {
+        text: reg.qrCode,
+        width: 120,
+        height: 120
+    });
+    
+    setTimeout(() => {
+        const qrImage = qrContainer.querySelector('img').src;
+        
+        const printContent = `
+            <html>
+            <head>
+                <title>Phiếu Đăng Ký #DK${reg.id}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+                    .header { text-align: center; margin-bottom: 30px; position: relative; }
+                    .header img { max-width: 100px; }
+                    .header h1 { color: #667eea; margin: 15px 0; }
+                    .qr-code { position: absolute; top: 0; right: 0; }
+                    .qr-code img { width: 120px; height: 120px; }
+                    .info-section { margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; }
+                    .info-row { display: flex; margin: 10px 0; }
+                    .info-label { font-weight: 600; width: 180px; }
+                    .info-value { flex: 1; }
+                    .highlight { font-size: 1.3em; color: #0066cc; font-weight: 600; }
+                    .footer { margin-top: 40px; text-align: center; padding-top: 30px; border-top: 2px solid #e9ecef; }
+                    .signature-section { display: flex; justify-content: space-around; margin-top: 40px; }
+                    .signature-box { text-align: center; }
+                    .signature-box img { max-width: 150px; max-height: 80px; margin: 10px 0; }
+                    @media print { body { padding: 20px; } }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    ${centerInfo.logo ? `<img src="${centerInfo.logo}" alt="Logo">` : ''}
+                    <h1>PHIẾU ĐĂNG KÝ HỌC</h1>
+                    <div class="qr-code">
+                        <img src="${qrImage}" alt="QR Code">
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-row">
+                        <div class="info-label">Mã đăng ký:</div>
+                        <div class="info-value">#DK${reg.id}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Ngày đăng ký:</div>
+                        <div class="info-value">${formatDate(reg.registrationDate)}</div>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3 style="color: #667eea; margin-top: 0;">👤 Thông Tin Học Viên</h3>
+                    <div class="info-row">
+                        <div class="info-label">Tên học viên:</div>
+                        <div class="info-value">${student.name}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Phụ huynh:</div>
+                        <div class="info-value">${student.parentName}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Số điện thoại:</div>
+                        <div class="info-value">${student.parentPhone}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value">${student.parentEmail || 'Chưa có'}</div>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <h3 style="color: #667eea; margin-top: 0;">📚 Thông Tin Đăng Ký</h3>
+                    <div class="info-row">
+                        <div class="info-label">Môn học:</div>
+                        <div class="info-value">${reg.subject}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Học phí:</div>
+                        <div class="info-value">${formatCurrency(reg.tuitionFee)}</div>
+                    </div>
+                    ${promoDetails ? `
+                    <div class="info-row">
+                        <div class="info-label">Gói ưu đãi:</div>
+                        <div class="info-value">${promoDetails}</div>
+                    </div>
+                    ` : ''}
+                    <div class="info-row">
+                        <div class="info-label">Tổng giảm giá:</div>
+                        <div class="info-value" style="color: #dc3545; font-weight: 600;">-${formatCurrency(reg.discountAmount)}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Thành tiền:</div>
+                        <div class="info-value highlight">${formatCurrency(reg.finalAmount)}</div>
+                    </div>
+                </div>
+                
+                <div class="info-section" style="background: #e7f3ff; border-left: 4px solid #0066cc;">
+                    <p style="margin: 0; font-weight: 600;">📌 Trạng thái: ${reg.status}</p>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>Cảm ơn quý phụ huynh đã tin tưởng!</strong></p>
+                    
+                    <div class="signature-section">
+                        <div class="signature-box">
+                            <p><strong>Phụ Huynh</strong></p>
+                            <p style="margin-top: 60px;">(Ký và ghi rõ họ tên)</p>
+                        </div>
+                        <div class="signature-box">
+                            <p><strong>Xác Nhận Của Trung Tâm</strong></p>
+                            ${centerInfo.signatureImage ? `<img src="${centerInfo.signatureImage}" alt="Chữ ký">` : '<div style="height: 60px;"></div>'}
+                            ${centerInfo.stampImage ? `<img src="${centerInfo.stampImage}" alt="Dấu" style="position: absolute; margin-top: -40px;">` : ''}
+                            <p>Ngày ${new Date().getDate()} tháng ${new Date().getMonth() + 1} năm ${new Date().getFullYear()}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; color: #666; font-size: 0.9em;">
+                        <p>${centerInfo.name || ''} ${centerInfo.phone ? '| ' + centerInfo.phone : ''}</p>
+                        <p>${centerInfo.address || ''}</p>
+                        <p>${centerInfo.email || ''} ${centerInfo.website ? '| ' + centerInfo.website : ''}</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        const printWindow = window.open('', '', 'width=800,height=600');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
+        
+        document.body.removeChild(qrContainer);
+    }, 300);
+}
+
+// ==========================================
+// 🔧 HELPER: Image Preview
+// ==========================================
+
+function previewImage(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            
+            // Save to centerInfo if signature/stamp
+            if (inputId === 'signatureImage') {
+                centerInfo.signatureImage = e.target.result;
+            } else if (inputId === 'stampImage') {
+                centerInfo.stampImage = e.target.result;
+            } else if (inputId === 'centerLogo') {
+                centerInfo.logo = e.target.result;
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// ==========================================
+// 🔄 FILTER FUNCTIONS
+// ==========================================
+
+function filterTrialStudents() {
+    const searchTerm = document.getElementById('searchTrialStudent').value.toLowerCase();
+    const trialStudents = students.filter(s => s.status === "Học Thử");
+    
+    const filtered = trialStudents.filter(student => 
+        student.name.toLowerCase().includes(searchTerm) ||
+        student.parentName.toLowerCase().includes(searchTerm) ||
+        student.parentPhone.includes(searchTerm) ||
+        student.subjects.some(sub => sub.toLowerCase().includes(searchTerm))
+    );
+    
+    document.getElementById('trialStudentSearchResults').textContent = 
+        `Tìm thấy ${filtered.length} kết quả`;
+    
+    // Render filtered results
+    const tbody = document.getElementById('trialStudentsList');
+    tbody.innerHTML = filtered.map(student => `
+        <tr>
+            <td>${student.name}</td>
+            <td>${student.age}</td>
+            <td>${student.parentName}</td>
+            <td>${student.parentPhone}</td>
+            <td>${student.subjects.map(s => `<span class="subject-tag">${s}</span>`).join('')}</td>
+            <td><span class="status-badge trial">Học Thử</span></td>
+            <td>
+                <button class="btn btn-info btn-sm" onclick="showQuickView(${student.id})">👁️ Xem</button>
+                <button class="btn btn-success btn-sm" onclick="showRegisterModal(${student.id})">✅ Chuyển Đăng Ký</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">🗑️ Xóa</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function filterRegisteredStudents() {
+    const searchTerm = document.getElementById('searchRegisteredStudent').value.toLowerCase();
+    const regStudents = students.filter(s => s.status === "Đã Đăng Ký");
+    
+    const filtered = regStudents.filter(student => 
+        student.name.toLowerCase().includes(searchTerm) ||
+        student.parentName.toLowerCase().includes(searchTerm) ||
+        student.parentPhone.includes(searchTerm) ||
+        student.subjects.some(sub => sub.toLowerCase().includes(searchTerm))
+    );
+    
+    document.getElementById('registeredStudentSearchResults').textContent = 
+        `Tìm thấy ${filtered.length} kết quả`;
+    
+    // Render filtered results
+    const tbody = document.getElementById('registeredStudentsList');
+    tbody.innerHTML = filtered.map(student => `
+        <tr>
+            <td>${student.name}</td>
+            <td>${student.age}</td>
+            <td>${student.parentName}</td>
+            <td>${student.parentPhone}</td>
+            <td>${student.subjects.map(s => `<span class="subject-tag">${s}</span>`).join('')}</td>
+            <td><span class="status-badge registered">Đã Đăng Ký</span></td>
+            <td>
+                <button class="btn btn-info btn-sm" onclick="showQuickView(${student.id})">👁️ Xem</button>
+                <button class="btn btn-warning btn-sm" onclick="showRegistrationList(${student.id})">📄 Phiếu ĐK</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">🗑️ Xóa</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ==========================================
+// 🚀 INITIALIZE ADDON FEATURES
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    migrateStudents();
+    renderSubjectDropdowns();
+    showCategoryTab('subjects');
+});
+
+console.log('✅ Addon Features V2.0 loaded successfully!');
+
+</script>
 </body>
 </html>
