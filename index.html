@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Học Viên - Complete System</title>
+    <title>Quản Lý Học Viên - Giai Đoạn 1 Hoàn Chỉnh</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -259,6 +259,17 @@
             border-bottom: none;
         }
 
+        /* GIAI ĐOẠN 1: Highlight search results */
+        tbody tr.highlight {
+            background: #fff3cd !important;
+            animation: highlightPulse 1s ease-in-out;
+        }
+
+        @keyframes highlightPulse {
+            0%, 100% { background: #fff3cd; }
+            50% { background: #ffe599; }
+        }
+
         .table-actions {
             display: flex;
             gap: 5px;
@@ -286,6 +297,10 @@
 
         .badge-info {
             background: #17a2b8;
+        }
+
+        .badge-danger {
+            background: #dc3545;
         }
 
         .empty-state {
@@ -317,6 +332,55 @@
         .stat-card p {
             opacity: 0.9;
             font-size: 1.1em;
+        }
+
+        /* GIAI ĐOẠN 1: Revenue chart styles */
+        .revenue-chart {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            margin: 20px 0;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .chart-bar {
+            flex: 1;
+            max-width: 80px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            margin: 0 5px;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .chart-bar:hover {
+            transform: translateY(-5px);
+        }
+
+        .chart-bar-label {
+            position: absolute;
+            top: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .chart-month {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #6c757d;
         }
 
         .modal {
@@ -376,6 +440,40 @@
 
         .close-modal:hover {
             color: #495057;
+        }
+
+        /* GIAI ĐOẠN 1: Duplicate/Conflict warning modal */
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .warning-box .existing-info {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .conflict-list {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .conflict-list h4 {
+            color: #721c24;
+            margin-bottom: 10px;
         }
 
         .notification {
@@ -445,28 +543,43 @@
             object-fit: contain;
         }
 
-        /* Receipt/Invoice Styles */
+        /* Receipt Styles - Compact for A4 and Half A4 */
         .receipt-container {
             background: white;
-            padding: 40px;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            max-width: 800px;
             margin: 0 auto;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        /* Biên Lai Điện Tử - Compact A4 */
+        .receipt-container.receipt-electronic {
+            padding: 20px 30px;
+            max-width: 700px;
+        }
+
+        /* Phiếu Thu - Half A4 (148mm x 210mm) */
+        .receipt-container.receipt-cash {
+            padding: 15px 20px;
+            max-width: 550px;
+            font-size: 0.9em;
         }
 
         .receipt-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #667eea;
         }
 
         .receipt-logo {
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
+        }
+
+        .receipt-cash .receipt-logo {
+            width: 60px;
+            height: 60px;
         }
 
         .receipt-logo img {
@@ -477,24 +590,55 @@
 
         .receipt-info {
             text-align: right;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+
+        .receipt-cash .receipt-info {
+            font-size: 0.75em;
         }
 
         .receipt-title {
-            font-size: 2em;
+            font-size: 1.8em;
             color: #667eea;
             font-weight: bold;
+            margin: 15px 0 5px 0;
+            text-align: center;
+        }
+
+        .receipt-cash .receipt-title {
+            font-size: 1.5em;
+            margin: 10px 0 5px 0;
+        }
+
+        .receipt-number {
+            text-align: center;
+            font-size: 1em;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .receipt-cash .receipt-number {
+            font-size: 0.9em;
             margin-bottom: 10px;
         }
 
         .receipt-details {
-            margin: 20px 0;
+            margin: 15px 0;
+        }
+
+        .receipt-cash .receipt-details {
+            margin: 10px 0;
         }
 
         .receipt-row {
             display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #e9ecef;
+        }
+
+        .receipt-cash .receipt-row {
+            padding: 6px 0;
         }
 
         .receipt-row:last-child {
@@ -504,49 +648,118 @@
         .receipt-label {
             font-weight: 600;
             color: #495057;
+            min-width: 140px;
+        }
+
+        .receipt-cash .receipt-label {
+            min-width: 110px;
+            font-size: 0.95em;
         }
 
         .receipt-value {
             color: #212529;
+            flex: 1;
         }
 
         .receipt-amount {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            margin: 20px 0;
+            margin: 15px 0;
             text-align: center;
         }
 
+        .receipt-cash .receipt-amount {
+            padding: 10px;
+            margin: 10px 0;
+        }
+
         .receipt-amount-label {
-            font-size: 1.2em;
+            font-size: 1em;
             color: #6c757d;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+        }
+
+        .receipt-cash .receipt-amount-label {
+            font-size: 0.9em;
         }
 
         .receipt-amount-value {
-            font-size: 2.5em;
+            font-size: 2em;
             color: #667eea;
             font-weight: bold;
         }
 
-        .receipt-qr {
-            text-align: center;
-            margin: 20px 0;
+        .receipt-cash .receipt-amount-value {
+            font-size: 1.6em;
         }
 
-        .receipt-qr canvas {
+        .receipt-amount-words {
+            font-style: italic;
+            color: #6c757d;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .receipt-cash .receipt-amount-words {
+            font-size: 0.8em;
+        }
+
+        .receipt-qr {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .receipt-cash .receipt-qr {
+            margin: 10px 0;
+        }
+
+        .receipt-qr h4 {
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .receipt-cash .receipt-qr h4 {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .receipt-qr p {
+            margin: 3px 0;
+            font-size: 0.9em;
+        }
+
+        .receipt-cash .receipt-qr p {
+            font-size: 0.8em;
+        }
+
+        .receipt-qr-code {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px;
+            background: white;
             border: 2px solid #e9ecef;
             border-radius: 8px;
-            padding: 10px;
+        }
+
+        .receipt-cash .receipt-qr-code {
+            margin-top: 5px;
+            padding: 5px;
         }
 
         .receipt-footer {
-            margin-top: 30px;
-            padding-top: 20px;
+            margin-top: 15px;
+            padding-top: 10px;
             border-top: 2px solid #e9ecef;
             text-align: center;
             color: #6c757d;
+            font-size: 0.85em;
+        }
+
+        .receipt-cash .receipt-footer {
+            margin-top: 10px;
+            padding-top: 8px;
+            font-size: 0.75em;
         }
 
         .qr-display {
@@ -653,6 +866,28 @@
             max-width: 100%;
         }
 
+        .backup-info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .backup-info-box h4 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .backup-info-box ul {
+            margin-left: 20px;
+        }
+
+        .backup-info-box li {
+            margin: 5px 0;
+            color: #555;
+        }
+
         @media print {
             body * {
                 visibility: hidden;
@@ -665,6 +900,7 @@
                 left: 0;
                 top: 0;
                 width: 100%;
+                box-shadow: none;
             }
         }
 
@@ -702,7 +938,7 @@
 
             .receipt-info {
                 text-align: center;
-                margin-top: 20px;
+                margin-top: 10px;
             }
         }
     </style>
@@ -714,7 +950,7 @@
                 <button class="btn btn-warning btn-sm" onclick="createBackup()">💾 Backup</button>
             </div>
             <h1>📚 Hệ Thống Quản Lý Trung Tâm</h1>
-            <p>Quản lý học viên, lịch hẹn và biên lai/phiếu thu</p>
+            <p>Giai Đoạn 1 Hoàn Chỉnh - Tìm Kiếm + Kiểm Tra Trùng + Xung Đột Lịch + Thống Kê Doanh Thu</p>
         </div>
 
         <div class="tabs">
@@ -732,6 +968,13 @@
             <div id="dashboard" class="tab-content active">
                 <h2 style="margin-bottom: 20px; color: #495057;">Tổng Quan Hệ Thống</h2>
                 <div class="stats" id="stats"></div>
+                
+                <!-- GIAI ĐOẠN 1: Revenue Chart -->
+                <div class="revenue-chart" id="revenue-chart-container" style="display:none;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">📈 Biểu Đồ Doanh Thu 6 Tháng Gần Nhất</h3>
+                    <div class="chart-bars" id="chart-bars"></div>
+                </div>
+
                 <h3 style="margin-top: 30px; margin-bottom: 15px; color: #495057;">Lịch Hẹn Sắp Tới</h3>
                 <div id="upcoming-appointments"></div>
             </div>
@@ -741,6 +984,7 @@
                 <h2 style="margin-bottom: 20px; color: #495057;">➕ Thêm/Sửa Học Viên</h2>
                 <form id="student-form">
                     <input type="hidden" id="editStudentId">
+                    <input type="hidden" id="bypassDuplicateCheck">
                     <div class="form-row">
                         <div class="form-group">
                             <label>Tên Học Viên *</label>
@@ -805,8 +1049,8 @@
             <!-- Students List Tab -->
             <div id="students" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                    <h2 style="color: #495057;">👥 Danh Sách Học Viên</h2>
-                    <input type="text" id="searchStudent" class="search-bar" placeholder="🔍 Tìm kiếm...">
+                    <h2 style="color: #495057;">👥 Danh Sách Học Viên (<span id="student-count">0</span>)</h2>
+                    <input type="text" id="searchStudent" class="search-bar" placeholder="🔍 Tìm kiếm..." onkeyup="filterStudents()">
                 </div>
                 <div id="students-list"></div>
             </div>
@@ -814,8 +1058,8 @@
             <!-- Appointments Tab -->
             <div id="appointments" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                    <h2 style="color: #495057;">📅 Quản Lý Lịch Hẹn</h2>
-                    <input type="text" id="searchAppointment" class="search-bar" placeholder="🔍 Tìm kiếm...">
+                    <h2 style="color: #495057;">📅 Quản Lý Lịch Hẹn (<span id="appointment-count">0</span>)</h2>
+                    <input type="text" id="searchAppointment" class="search-bar" placeholder="🔍 Tìm kiếm..." onkeyup="filterAppointments()">
                 </div>
                 <div id="appointments-list"></div>
             </div>
@@ -823,9 +1067,9 @@
             <!-- Receipts Tab -->
             <div id="receipts" class="tab-content">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                    <h2 style="color: #495057;">🧾 Quản Lý Biên Lai/Phiếu Thu</h2>
+                    <h2 style="color: #495057;">🧾 Quản Lý Biên Lai/Phiếu Thu (<span id="receipt-count">0</span>)</h2>
                     <div style="display: flex; gap: 10px;">
-                        <input type="text" id="searchReceipt" class="search-bar" placeholder="🔍 Tìm kiếm...">
+                        <input type="text" id="searchReceipt" class="search-bar" placeholder="🔍 Tìm kiếm..." onkeyup="filterReceipts()">
                         <button class="btn btn-success" onclick="openReceiptModal()">➕ Tạo Biên Lai</button>
                     </div>
                 </div>
@@ -929,6 +1173,18 @@
 
                 <div class="settings-group">
                     <h3>🔄 Sao Lưu Tự Động</h3>
+                    <div class="backup-info-box">
+                        <h4>📋 Thông Tin Về Backup Tự Động:</h4>
+                        <ul>
+                            <li><strong>Lưu trữ:</strong> Backup được lưu trong <strong>LocalStorage</strong> của trình duyệt</li>
+                            <li><strong>Định dạng:</strong> <strong>JSON</strong> (JavaScript Object Notation)</li>
+                            <li><strong>Số lượng:</strong> Tự động giữ <strong>10 bản</strong> backup gần nhất</li>
+                            <li><strong>Kích hoạt:</strong> Backup tự động chạy sau mỗi thao tác thêm/sửa/xóa</li>
+                            <li><strong>Dữ liệu:</strong> Bao gồm học viên, lịch hẹn, biên lai, info trung tâm, info ngân hàng</li>
+                            <li><strong>Khôi phục:</strong> Có thể khôi phục từ lịch sử backup bên dưới</li>
+                            <li><strong>Lưu ý:</strong> Để backup vĩnh viễn, hãy dùng "Tải Backup JSON" ở tab Xuất Dữ Liệu</li>
+                        </ul>
+                    </div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span>Bật sao lưu tự động</span>
                         <label class="switch">
@@ -938,6 +1194,11 @@
                     </div>
                     <div style="margin-top: 15px;">
                         <span class="auto-backup-status" id="backupStatus">Chưa kích hoạt</span>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h4 style="margin-bottom: 10px;">📜 Lịch Sử Backup (5 bản gần nhất):</h4>
+                        <div id="backup-history"></div>
                     </div>
                 </div>
 
@@ -991,8 +1252,9 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Số Tiền *</label>
-                        <input type="number" id="receiptAmount" required placeholder="VD: 500000" min="0">
+                        <label>Số Tiền (VND) *</label>
+                        <input type="text" id="receiptAmount" required placeholder="VD: 2.000.000" onkeyup="formatAmountInput(this)">
+                        <small style="color: #6c757d;">Nhập số, tự động thêm dấu phân cách nghìn</small>
                     </div>
                     <div class="form-group">
                         <label>Ngày Thu *</label>
@@ -1018,9 +1280,14 @@
                 <h2>📅 Đặt Lịch Hẹn</h2>
                 <button class="close-modal" onclick="closeAppointmentModal()">&times;</button>
             </div>
+            
+            <!-- GIAI ĐOẠN 1: Conflict Warning -->
+            <div id="conflictWarning" style="display: none;"></div>
+            
             <form id="appointment-form">
                 <input type="hidden" id="appointmentStudentId">
                 <input type="hidden" id="editAppointmentId">
+                <input type="hidden" id="ignoreConflict">
                 <div class="form-group">
                     <label>Học Viên</label>
                     <input type="text" id="appointmentStudentName" readonly style="background: #f8f9fa;">
@@ -1037,11 +1304,11 @@
                 </div>
                 <div class="form-group">
                     <label>Ngày Hẹn *</label>
-                    <input type="date" id="appointmentDate" required>
+                    <input type="date" id="appointmentDate" required onchange="checkAppointmentConflict()">
                 </div>
                 <div class="form-group">
                     <label>Giờ Hẹn *</label>
-                    <input type="time" id="appointmentTime" required>
+                    <input type="time" id="appointmentTime" required onchange="checkAppointmentConflict()">
                 </div>
                 <div class="form-group">
                     <label>Ghi Chú</label>
@@ -1049,6 +1316,28 @@
                 </div>
                 <button type="submit" class="btn btn-success">✅ Lưu Lịch Hẹn</button>
             </form>
+        </div>
+    </div>
+
+    <!-- GIAI ĐOẠN 1: Duplicate Student Warning Modal -->
+    <div id="duplicateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚠️ Phát Hiện Trùng Lặp</h2>
+                <button class="close-modal" onclick="closeDuplicateModal()">&times;</button>
+            </div>
+            <div class="warning-box">
+                <h4>Đã có học viên với số điện thoại này!</h4>
+                <div class="existing-info" id="existingStudentInfo"></div>
+            </div>
+            <p style="margin: 20px 0; color: #495057;">
+                <strong>Lựa chọn:</strong>
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-info" onclick="viewExistingStudent()">👁️ Xem Học Viên Cũ</button>
+                <button class="btn btn-success" onclick="addAnyway()">➕ Vẫn Thêm Mới</button>
+                <button class="btn btn-warning" onclick="closeDuplicateModal()">❌ Hủy</button>
+            </div>
         </div>
     </div>
 
@@ -1087,7 +1376,9 @@
     <div id="notification" class="notification"></div>
 
     <script>
-        // Data Storage
+        // ==========================================
+        // 📊 DATA STORAGE
+        // ==========================================
         let students = JSON.parse(localStorage.getItem('students')) || [];
         let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
         let receipts = JSON.parse(localStorage.getItem('receipts')) || [];
@@ -1097,13 +1388,20 @@
         let autoBackupEnabled = localStorage.getItem('autoBackupEnabled') === 'true';
 
         let currentReceiptForView = null;
+        let duplicateStudentData = null; // GIAI ĐOẠN 1: Lưu học viên trùng
 
-        // Initialize
+        // GIAI ĐOẠN 1: Cấu hình slot lịch hẹn (mặc định 60 phút)
+        const SLOT_DURATION_MINUTES = 60;
+
+        // ==========================================
+        // 🚀 INITIALIZE
+        // ==========================================
         document.addEventListener('DOMContentLoaded', function() {
             renderAll();
             loadCenterInfo();
             loadBankInfo();
             updateBackupStatus();
+            renderBackupHistory();
             
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('appointmentDate').min = today;
@@ -1111,7 +1409,24 @@
             document.getElementById('autoBackupToggle').checked = autoBackupEnabled;
         });
 
-        // Notification System
+        // ==========================================
+        // 💰 FORMAT AMOUNT
+        // ==========================================
+        function formatAmountInput(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value) {
+                value = parseInt(value).toLocaleString('vi-VN');
+            }
+            input.value = value;
+        }
+
+        function parseFormattedAmount(formattedAmount) {
+            return parseInt(formattedAmount.replace(/\./g, '').replace(/,/g, '')) || 0;
+        }
+
+        // ==========================================
+        // 🔔 NOTIFICATION SYSTEM
+        // ==========================================
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
             notification.className = `notification ${type} show`;
@@ -1119,7 +1434,9 @@
             setTimeout(() => notification.classList.remove('show'), 3000);
         }
 
-        // Auto Backup
+        // ==========================================
+        // 💾 AUTO BACKUP
+        // ==========================================
         function createAutoBackup() {
             if (!autoBackupEnabled) return;
             const backup = {
@@ -1137,6 +1454,7 @@
             autoBackupEnabled = document.getElementById('autoBackupToggle').checked;
             localStorage.setItem('autoBackupEnabled', autoBackupEnabled);
             updateBackupStatus();
+            renderBackupHistory();
             showNotification(autoBackupEnabled ? 'Đã bật sao lưu tự động' : 'Đã tắt sao lưu tự động', 'info');
             if (autoBackupEnabled) createAutoBackup();
         }
@@ -1152,6 +1470,54 @@
             }
         }
 
+        function renderBackupHistory() {
+            const container = document.getElementById('backup-history');
+            
+            if (backupHistory.length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; font-style: italic;">Chưa có bản backup nào</p>';
+                return;
+            }
+
+            const html = backupHistory.slice(0, 5).map((backup, index) => {
+                const date = new Date(backup.date);
+                const dateStr = date.toLocaleString('vi-VN');
+                return `
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${backup.type === 'auto' ? '🔄 Tự động' : '💾 Thủ công'}</strong><br>
+                            <small style="color: #6c757d;">${dateStr}</small><br>
+                            <small>HV: ${backup.students.length} | Lịch: ${backup.appointments.length} | BL: ${backup.receipts.length}</small>
+                        </div>
+                        <button class="btn btn-info btn-sm" onclick="restoreFromHistory(${index})">↩️ Khôi phục</button>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = html;
+        }
+
+        function restoreFromHistory(index) {
+            if (!confirm('Khôi phục từ backup này? Dữ liệu hiện tại sẽ bị ghi đè!')) return;
+
+            const backup = backupHistory[index];
+            students = backup.students || [];
+            appointments = backup.appointments || [];
+            receipts = backup.receipts || [];
+            centerInfo = backup.centerInfo || {};
+            bankInfo = backup.bankInfo || {};
+
+            localStorage.setItem('students', JSON.stringify(students));
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+            localStorage.setItem('receipts', JSON.stringify(receipts));
+            localStorage.setItem('centerInfo', JSON.stringify(centerInfo));
+            localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
+
+            renderAll();
+            loadCenterInfo();
+            loadBankInfo();
+            showNotification('✅ Khôi phục thành công!', 'success');
+        }
+
         function createBackup() {
             const backup = {
                 id: Date.now(),
@@ -1162,10 +1528,13 @@
             backupHistory.unshift(backup);
             if (backupHistory.length > 10) backupHistory = backupHistory.slice(0, 10);
             localStorage.setItem('backupHistory', JSON.stringify(backupHistory));
+            renderBackupHistory();
             showNotification('✅ Đã tạo backup thủ công!', 'success');
         }
 
-        // Tab Switching
+        // ==========================================
+        // 📑 TAB SWITCHING
+        // ==========================================
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -1179,10 +1548,13 @@
             if (tabName === 'settings') {
                 loadCenterInfo();
                 loadBankInfo();
+                renderBackupHistory();
             }
         }
 
-        // Center Info
+        // ==========================================
+        // 🏢 CENTER INFO
+        // ==========================================
         document.getElementById('center-info-form').addEventListener('submit', function(e) {
             e.preventDefault();
             centerInfo = {
@@ -1223,7 +1595,9 @@
             }
         }
 
-        // Bank Info
+        // ==========================================
+        // 💳 BANK INFO
+        // ==========================================
         document.getElementById('bank-info-form').addEventListener('submit', function(e) {
             e.preventDefault();
             bankInfo = {
@@ -1261,7 +1635,78 @@
             }
         }
 
-        // Student Form
+        // ==========================================
+        // 🎓 GIAI ĐOẠN 1: MODULE B1 - KIỂM TRA TRÙNG HỌC VIÊN
+        // ==========================================
+        function normalizePhone(phone) {
+            // Chuẩn hóa SĐT: bỏ dấu cách, dấu -, chuyển +84 thành 0
+            let normalized = phone.replace(/[\s\-]/g, '');
+            if (normalized.startsWith('+84')) {
+                normalized = '0' + normalized.substring(3);
+            } else if (normalized.startsWith('84') && normalized.length > 10) {
+                normalized = '0' + normalized.substring(2);
+            }
+            return normalized;
+        }
+
+        function checkDuplicateStudent(phone, excludeId = null) {
+            const normalizedPhone = normalizePhone(phone);
+            const existing = students.filter(s => {
+                if (excludeId && s.id === excludeId) return false;
+                return normalizePhone(s.parentPhone) === normalizedPhone;
+            });
+
+            return {
+                isDuplicate: existing.length > 0,
+                existingStudents: existing
+            };
+        }
+
+        function showDuplicateWarning(existingStudents) {
+            duplicateStudentData = existingStudents[0];
+            const info = `
+                <p><strong>Tên:</strong> ${duplicateStudentData.name}</p>
+                <p><strong>Tuổi:</strong> ${duplicateStudentData.age}</p>
+                <p><strong>Phụ huynh:</strong> ${duplicateStudentData.parentName}</p>
+                <p><strong>SĐT:</strong> ${duplicateStudentData.parentPhone}</p>
+                <p><strong>Môn học:</strong> ${duplicateStudentData.subjects.join(', ')}</p>
+                <p><strong>Ngày tạo:</strong> ${formatDate(duplicateStudentData.createdAt.split('T')[0])}</p>
+            `;
+            document.getElementById('existingStudentInfo').innerHTML = info;
+            document.getElementById('duplicateModal').classList.add('active');
+        }
+
+        function closeDuplicateModal() {
+            document.getElementById('duplicateModal').classList.remove('active');
+            duplicateStudentData = null;
+        }
+
+        function viewExistingStudent() {
+            if (!duplicateStudentData) return;
+            closeDuplicateModal();
+            switchTab('students');
+            document.querySelector('.tab[onclick*="students"]').click();
+            // Highlight học viên
+            setTimeout(() => {
+                const rows = document.querySelectorAll('#students-list tbody tr');
+                rows.forEach(row => {
+                    if (row.innerHTML.includes(duplicateStudentData.name)) {
+                        row.classList.add('highlight');
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            }, 300);
+        }
+
+        function addAnyway() {
+            document.getElementById('bypassDuplicateCheck').value = 'true';
+            closeDuplicateModal();
+            document.getElementById('student-form').dispatchEvent(new Event('submit'));
+        }
+
+        // ==========================================
+        // 🎓 STUDENT FORM
+        // ==========================================
         document.getElementById('student-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const subjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(cb => cb.value);
@@ -1271,11 +1716,26 @@
             }
 
             const editId = document.getElementById('editStudentId').value;
+            const bypassCheck = document.getElementById('bypassDuplicateCheck').value;
+            const phone = document.getElementById('parentPhone').value;
+
+            // GIAI ĐOẠN 1: Kiểm tra trùng (nếu không phải edit và không bypass)
+            if (!editId && bypassCheck !== 'true') {
+                const duplicate = checkDuplicateStudent(phone);
+                if (duplicate.isDuplicate) {
+                    showDuplicateWarning(duplicate.existingStudents);
+                    return;
+                }
+            }
+
+            // Reset bypass flag
+            document.getElementById('bypassDuplicateCheck').value = '';
+
             const studentData = {
                 name: document.getElementById('studentName').value,
                 age: document.getElementById('studentAge').value,
                 parentName: document.getElementById('parentName').value,
-                parentPhone: document.getElementById('parentPhone').value,
+                parentPhone: phone,
                 parentEmail: document.getElementById('parentEmail').value,
                 subjects: subjects,
                 notes: document.getElementById('notes').value
@@ -1322,6 +1782,7 @@
 
         function cancelEdit() {
             document.getElementById('editStudentId').value = '';
+            document.getElementById('bypassDuplicateCheck').value = '';
             document.getElementById('submitBtn').textContent = '💾 Lưu Học Viên';
             document.getElementById('cancelEditBtn').style.display = 'none';
         }
@@ -1339,7 +1800,197 @@
             showNotification('✅ Đã xóa học viên!', 'success');
         }
 
-        // Render Functions
+        // ==========================================
+        // 📅 GIAI ĐOẠN 1: MODULE B2 - KIỂM TRA XUNG ĐỘT LỊCH HẸN
+        // ==========================================
+        function checkAppointmentConflict() {
+            const date = document.getElementById('appointmentDate').value;
+            const time = document.getElementById('appointmentTime').value;
+            const editId = document.getElementById('editAppointmentId').value;
+            const ignore = document.getElementById('ignoreConflict').value;
+
+            if (!date || !time || ignore === 'true') {
+                document.getElementById('conflictWarning').style.display = 'none';
+                return;
+            }
+
+            const conflicts = findConflictingAppointments(date, time, editId);
+            
+            if (conflicts.length > 0) {
+                const html = `
+                    <div class="conflict-list">
+                        <h4>⚠️ Phát hiện ${conflicts.length} lịch hẹn trùng giờ!</h4>
+                        ${conflicts.map(apt => {
+                            const student = students.find(s => s.id === apt.studentId);
+                            return `<div style="background: white; padding: 8px; border-radius: 5px; margin: 5px 0;">
+                                <strong>${student?.name || 'N/A'}</strong> - ${apt.subject}<br>
+                                <small>📅 ${formatDate(apt.date)} lúc ${apt.time}</small>
+                            </div>`;
+                        }).join('')}
+                        <p style="margin-top: 10px; color: #721c24;">
+                            <strong>Lưu ý:</strong> Nếu trung tâm có nhiều phòng học, bạn có thể tiếp tục đặt lịch.
+                        </p>
+                    </div>
+                `;
+                document.getElementById('conflictWarning').innerHTML = html;
+                document.getElementById('conflictWarning').style.display = 'block';
+            } else {
+                document.getElementById('conflictWarning').style.display = 'none';
+            }
+        }
+
+        function findConflictingAppointments(date, time, excludeId = null) {
+            const targetDateTime = new Date(date + ' ' + time);
+            const targetStart = targetDateTime.getTime();
+            const targetEnd = targetStart + (SLOT_DURATION_MINUTES * 60 * 1000);
+
+            return appointments.filter(apt => {
+                if (excludeId && apt.id == excludeId) return false;
+                
+                const aptDateTime = new Date(apt.date + ' ' + apt.time);
+                const aptStart = aptDateTime.getTime();
+                const aptEnd = aptStart + (SLOT_DURATION_MINUTES * 60 * 1000);
+
+                // Kiểm tra overlap
+                return (targetStart < aptEnd && targetEnd > aptStart);
+            });
+        }
+
+        // ==========================================
+        // 📊 GIAI ĐOẠN 1: MODULE B3 - THỐNG KÊ DOANH THU
+        // ==========================================
+        function calculateRevenueStats() {
+            const totalRevenue = receipts.reduce((sum, r) => sum + parseFloat(r.amount || 0), 0);
+            const avgRevenue = receipts.length > 0 ? totalRevenue / receipts.length : 0;
+
+            // Doanh thu hôm nay
+            const today = new Date().toISOString().split('T')[0];
+            const todayRevenue = receipts.filter(r => r.date === today)
+                .reduce((sum, r) => sum + parseFloat(r.amount || 0), 0);
+
+            // Doanh thu tháng này
+            const thisMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
+            const monthRevenue = receipts.filter(r => r.date.startsWith(thisMonth))
+                .reduce((sum, r) => sum + parseFloat(r.amount || 0), 0);
+
+            return {
+                total: totalRevenue,
+                average: avgRevenue,
+                today: todayRevenue,
+                thisMonth: monthRevenue
+            };
+        }
+
+        function calculateRevenueBySubject() {
+            const subjectRevenue = {};
+            
+            receipts.forEach(r => {
+                // Trích xuất môn học từ description (giả định format: "Học phí - Cờ Vua")
+                const subjects = ['Cờ Vua', 'Vẽ Tranh', 'Tiền Tiểu Học', 'Rèn Chữ'];
+                let found = false;
+                
+                subjects.forEach(sub => {
+                    if (r.description.includes(sub)) {
+                        subjectRevenue[sub] = (subjectRevenue[sub] || 0) + parseFloat(r.amount || 0);
+                        found = true;
+                    }
+                });
+                
+                if (!found) {
+                    subjectRevenue['Khác'] = (subjectRevenue['Khác'] || 0) + parseFloat(r.amount || 0);
+                }
+            });
+
+            return subjectRevenue;
+        }
+
+        function renderRevenueChart() {
+            // Lấy doanh thu 6 tháng gần nhất
+            const monthlyRevenue = {};
+            const now = new Date();
+            
+            // Khởi tạo 6 tháng gần nhất
+            for (let i = 5; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                monthlyRevenue[key] = 0;
+            }
+
+            // Tính doanh thu từng tháng
+            receipts.forEach(r => {
+                const month = r.date.substring(0, 7);
+                if (monthlyRevenue.hasOwnProperty(month)) {
+                    monthlyRevenue[month] += parseFloat(r.amount || 0);
+                }
+            });
+
+            // Render chart
+            const maxRevenue = Math.max(...Object.values(monthlyRevenue), 1);
+            const chartHtml = Object.entries(monthlyRevenue).map(([month, revenue]) => {
+                const height = (revenue / maxRevenue) * 100;
+                const [year, m] = month.split('-');
+                const monthName = `T${parseInt(m)}/${year.substring(2)}`;
+                
+                return `
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                        <div class="chart-bar" style="height: ${height}%; min-height: 5px;">
+                            <div class="chart-bar-label">${formatCurrency(revenue)}</div>
+                        </div>
+                        <div class="chart-month">${monthName}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('chart-bars').innerHTML = chartHtml;
+            document.getElementById('revenue-chart-container').style.display = receipts.length > 0 ? 'block' : 'none';
+        }
+
+        // ==========================================
+        // 🔍 GIAI ĐOẠN 1: MODULE A3 - TÌM KIẾM
+        // ==========================================
+        function filterStudents() {
+            const keyword = document.getElementById('searchStudent').value.toLowerCase();
+            const filtered = students.filter(s => {
+                return s.name.toLowerCase().includes(keyword) ||
+                       s.parentName.toLowerCase().includes(keyword) ||
+                       s.parentPhone.includes(keyword) ||
+                       (s.parentEmail && s.parentEmail.toLowerCase().includes(keyword)) ||
+                       s.subjects.some(sub => sub.toLowerCase().includes(keyword));
+            });
+            renderStudentsList(filtered);
+        }
+
+        function filterAppointments() {
+            const keyword = document.getElementById('searchAppointment').value.toLowerCase();
+            const filtered = appointments.filter(apt => {
+                const student = students.find(s => s.id === apt.studentId);
+                return apt.subject.toLowerCase().includes(keyword) ||
+                       apt.date.includes(keyword) ||
+                       (apt.notes && apt.notes.toLowerCase().includes(keyword)) ||
+                       (student && (
+                           student.name.toLowerCase().includes(keyword) ||
+                           student.parentName.toLowerCase().includes(keyword)
+                       ));
+            });
+            renderAppointmentsList(filtered);
+        }
+
+        function filterReceipts() {
+            const keyword = document.getElementById('searchReceipt').value.toLowerCase();
+            const filtered = receipts.filter(r => {
+                const student = students.find(s => s.id === r.studentId);
+                return r.description.toLowerCase().includes(keyword) ||
+                       r.parentName.toLowerCase().includes(keyword) ||
+                       r.type.toLowerCase().includes(keyword) ||
+                       r.amount.toString().includes(keyword) ||
+                       (student && student.name.toLowerCase().includes(keyword));
+            });
+            renderReceiptsList(filtered);
+        }
+
+        // ==========================================
+        // 🎨 RENDER FUNCTIONS
+        // ==========================================
         function renderAll() {
             renderDashboard();
             renderStudentsList();
@@ -1349,7 +2000,8 @@
         }
 
         function renderDashboard() {
-            const totalRevenue = receipts.reduce((sum, r) => sum + parseFloat(r.amount || 0), 0);
+            // GIAI ĐOẠN 1: Thống kê doanh thu nâng cao
+            const revenueStats = calculateRevenueStats();
             const statsHtml = `
                 <div class="stat-card">
                     <h3>${students.length}</h3>
@@ -1364,11 +2016,22 @@
                     <p>Biên Lai</p>
                 </div>
                 <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                    <h3>${formatCurrency(totalRevenue)}</h3>
-                    <p>Doanh Thu</p>
+                    <h3>${formatCurrency(revenueStats.total)}</h3>
+                    <p>Tổng Doanh Thu</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                    <h3>${formatCurrency(revenueStats.thisMonth)}</h3>
+                    <p>Doanh Thu Tháng Này</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                    <h3>${formatCurrency(revenueStats.today)}</h3>
+                    <p>Doanh Thu Hôm Nay</p>
                 </div>
             `;
             document.getElementById('stats').innerHTML = statsHtml;
+
+            // GIAI ĐOẠN 1: Render chart
+            renderRevenueChart();
 
             const upcoming = getUpcomingAppointments().slice(0, 5);
             const upcomingHtml = upcoming.length > 0 
@@ -1385,18 +2048,21 @@
             document.getElementById('upcoming-appointments').innerHTML = upcomingHtml;
         }
 
-        function renderStudentsList() {
+        function renderStudentsList(filteredList = null) {
+            const list = filteredList || students;
             const container = document.getElementById('students-list');
-            if (students.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p style="font-size: 3em;">📋</p><h3>Chưa có học viên</h3></div>';
+            document.getElementById('student-count').textContent = list.length;
+            
+            if (list.length === 0) {
+                container.innerHTML = filteredList ? 
+                    '<div class="empty-state"><p>🔍 Không tìm thấy học viên nào</p></div>' :
+                    '<div class="empty-state"><p style="font-size: 3em;">📋</p><h3>Chưa có học viên</h3></div>';
                 return;
             }
 
             const html = `<div class="table-container"><table><thead><tr>
                 <th>Tên</th><th>Tuổi</th><th>Phụ Huynh</th><th>SĐT</th><th>Email</th><th>Môn Học</th><th>Thao Tác</th>
-            </tr></thead><tbody>${students.map(s => {
-                const aptCount = appointments.filter(a => a.studentId === s.id).length;
-                const receiptCount = receipts.filter(r => r.studentId === s.id).length;
+            </tr></thead><tbody>${list.map(s => {
                 return `<tr>
                     <td><strong>${s.name}</strong></td>
                     <td>${s.age}</td>
@@ -1415,14 +2081,19 @@
             container.innerHTML = html;
         }
 
-        function renderAppointmentsList() {
+        function renderAppointmentsList(filteredList = null) {
+            const list = filteredList || appointments;
             const container = document.getElementById('appointments-list');
-            if (appointments.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p style="font-size: 3em;">📅</p><h3>Chưa có lịch hẹn</h3></div>';
+            document.getElementById('appointment-count').textContent = list.length;
+            
+            if (list.length === 0) {
+                container.innerHTML = filteredList ?
+                    '<div class="empty-state"><p>🔍 Không tìm thấy lịch hẹn nào</p></div>' :
+                    '<div class="empty-state"><p style="font-size: 3em;">📅</p><h3>Chưa có lịch hẹn</h3></div>';
                 return;
             }
 
-            const sorted = [...appointments].sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+            const sorted = [...list].sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
             const html = `<div class="table-container"><table><thead><tr>
                 <th>Trạng Thái</th><th>Học Viên</th><th>Phụ Huynh</th><th>SĐT</th><th>Môn</th><th>Ngày</th><th>Giờ</th><th>Thao Tác</th>
             </tr></thead><tbody>${sorted.map(apt => {
@@ -1446,14 +2117,19 @@
             container.innerHTML = html;
         }
 
-        function renderReceiptsList() {
+        function renderReceiptsList(filteredList = null) {
+            const list = filteredList || receipts;
             const container = document.getElementById('receipts-list');
-            if (receipts.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p style="font-size: 3em;">🧾</p><h3>Chưa có biên lai</h3></div>';
+            document.getElementById('receipt-count').textContent = list.length;
+            
+            if (list.length === 0) {
+                container.innerHTML = filteredList ?
+                    '<div class="empty-state"><p>🔍 Không tìm thấy biên lai nào</p></div>' :
+                    '<div class="empty-state"><p style="font-size: 3em;">🧾</p><h3>Chưa có biên lai</h3></div>';
                 return;
             }
 
-            const sorted = [...receipts].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const sorted = [...list].sort((a, b) => new Date(b.date) - new Date(a.date));
             const html = `<div class="table-container"><table><thead><tr>
                 <th>Số</th><th>Loại</th><th>Học Viên</th><th>Phụ Huynh</th><th>Nội Dung</th><th>Số Tiền</th><th>Ngày</th><th>Thao Tác</th>
             </tr></thead><tbody>${sorted.map((r, idx) => {
@@ -1476,7 +2152,9 @@
             container.innerHTML = html;
         }
 
-        // Receipt Functions
+        // ==========================================
+        // 🧾 RECEIPT FUNCTIONS
+        // ==========================================
         function populateStudentSelects() {
             const select = document.getElementById('receiptStudent');
             select.innerHTML = '<option value="">-- Chọn học viên --</option>' + 
@@ -1512,13 +2190,16 @@
             const studentId = parseInt(document.getElementById('receiptStudent').value);
             const student = students.find(s => s.id === studentId);
             
+            const amountStr = document.getElementById('receiptAmount').value;
+            const amount = parseFormattedAmount(amountStr);
+
             const receiptData = {
                 studentId,
                 parentName: student.parentName,
                 parentPhone: student.parentPhone,
                 type: document.getElementById('receiptType').value,
                 description: document.getElementById('receiptDescription').value,
-                amount: document.getElementById('receiptAmount').value,
+                amount: amount,
                 date: document.getElementById('receiptDate').value,
                 notes: document.getElementById('receiptNotes').value
             };
@@ -1550,7 +2231,7 @@
             document.getElementById('receiptStudent').value = receipt.studentId;
             updateReceiptStudentInfo();
             document.getElementById('receiptDescription').value = receipt.description;
-            document.getElementById('receiptAmount').value = receipt.amount;
+            document.getElementById('receiptAmount').value = parseInt(receipt.amount).toLocaleString('vi-VN');
             document.getElementById('receiptDate').value = receipt.date;
             document.getElementById('receiptNotes').value = receipt.notes || '';
             document.getElementById('receiptModal').classList.add('active');
@@ -1573,24 +2254,27 @@
             const student = students.find(s => s.id === receipt.studentId);
             const receiptNumber = receipts.filter(r => new Date(r.date) <= new Date(receipt.date)).length;
 
+            const isCash = receipt.type.includes('Phiếu Thu');
+            const containerClass = isCash ? 'receipt-cash' : 'receipt-electronic';
+
+            const qrSize = isCash ? 120 : 150;
+
             const html = `
-                <div class="receipt-container" id="printableReceipt">
+                <div class="receipt-container ${containerClass}" id="printableReceipt">
                     <div class="receipt-header">
                         <div class="receipt-logo">
-                            ${centerInfo.logo ? `<img src="${centerInfo.logo}" alt="Logo">` : '<div style="width: 100px; height: 100px; background: #e9ecef; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6c757d;">Logo</div>'}
+                            ${centerInfo.logo ? `<img src="${centerInfo.logo}" alt="Logo">` : '<div style="width: 100%; height: 100%; background: #e9ecef; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 0.8em;">Logo</div>'}
                         </div>
                         <div class="receipt-info">
-                            <h3 style="margin: 0; color: #667eea;">${centerInfo.name || 'TRUNG TÂM'}</h3>
-                            <p style="margin: 5px 0;">📍 ${centerInfo.address || ''}</p>
-                            <p style="margin: 5px 0;">📞 ${centerInfo.phone || ''}</p>
-                            ${centerInfo.email ? `<p style="margin: 5px 0;">📧 ${centerInfo.email}</p>` : ''}
+                            <strong style="font-size: 1.1em; color: #667eea;">${centerInfo.name || 'TRUNG TÂM'}</strong><br>
+                            📍 ${centerInfo.address || ''}<br>
+                            📞 ${centerInfo.phone || ''}
+                            ${centerInfo.email ? `<br>📧 ${centerInfo.email}` : ''}
                         </div>
                     </div>
                     
-                    <div style="text-align: center; margin: 20px 0;">
-                        <div class="receipt-title">${receipt.type.toUpperCase()}</div>
-                        <p style="font-size: 1.2em; color: #6c757d;">Số: #${String(receiptNumber).padStart(4, '0')}</p>
-                    </div>
+                    <div class="receipt-title">${receipt.type.toUpperCase()}</div>
+                    <div class="receipt-number">Số: #${String(receiptNumber).padStart(4, '0')}</div>
 
                     <div class="receipt-details">
                         <div class="receipt-row">
@@ -1622,22 +2306,22 @@
                     <div class="receipt-amount">
                         <div class="receipt-amount-label">Số tiền</div>
                         <div class="receipt-amount-value">${formatCurrency(receipt.amount)}</div>
-                        <div style="font-style: italic; color: #6c757d; margin-top: 10px;">(${numberToWords(receipt.amount)})</div>
+                        <div class="receipt-amount-words">(${numberToWords(receipt.amount)})</div>
                     </div>
 
                     ${receipt.type.includes('Điện Tử') && bankInfo.accountNumber ? `
                     <div class="receipt-qr">
-                        <h4 style="margin-bottom: 10px;">Thông tin chuyển khoản:</h4>
+                        <h4>Thông tin chuyển khoản:</h4>
                         <p><strong>Ngân hàng:</strong> ${bankInfo.bankName}</p>
                         <p><strong>Số TK:</strong> ${bankInfo.accountNumber}</p>
                         <p><strong>Chủ TK:</strong> ${bankInfo.accountName}</p>
-                        <div id="receiptQRCode" style="margin-top: 15px;"></div>
+                        <div class="receipt-qr-code" id="receiptQRCode"></div>
                     </div>
                     ` : ''}
 
                     <div class="receipt-footer">
                         <p>Cảm ơn quý phụ huynh đã tin tưởng!</p>
-                        <p style="margin-top: 10px; font-size: 0.9em;">In lúc: ${new Date().toLocaleString('vi-VN')}</p>
+                        <p style="margin-top: 5px; font-size: 0.85em;">In lúc: ${new Date().toLocaleString('vi-VN')}</p>
                     </div>
                 </div>
             `;
@@ -1646,10 +2330,13 @@
             
             if (receipt.type.includes('Điện Tử') && bankInfo.accountNumber) {
                 setTimeout(() => {
-                    new QRCode(document.getElementById('receiptQRCode'), {
-                        text: `Bank: ${bankInfo.bankName}\nAccount: ${bankInfo.accountNumber}\nName: ${bankInfo.accountName}\nAmount: ${receipt.amount}\nContent: ${receipt.description}`,
-                        width: 150,
-                        height: 150
+                    const qrContainer = document.getElementById('receiptQRCode');
+                    qrContainer.innerHTML = '';
+                    const qrData = `${bankInfo.bankName}|${bankInfo.accountNumber}|${bankInfo.accountName}|${receipt.amount}|${receipt.description}`;
+                    new QRCode(qrContainer, {
+                        text: qrData,
+                        width: qrSize,
+                        height: qrSize
                     });
                 }, 100);
             }
@@ -1667,24 +2354,36 @@
 
         function downloadReceiptPDF() {
             const element = document.getElementById('printableReceipt');
+            const receipt = currentReceiptForView;
+            const isCash = receipt.type.includes('Phiếu Thu');
+            
             const opt = {
-                margin: 10,
-                filename: `BieuLai_${currentReceiptForView.id}.pdf`,
+                margin: isCash ? 5 : 10,
+                filename: `${receipt.type.replace(/\s/g, '')}_${receipt.id}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: isCash ? [148, 210] : 'a4',
+                    orientation: 'portrait' 
+                }
             };
+            
             html2pdf().set(opt).from(element).save();
             showNotification('✅ Đang tải PDF...', 'success');
         }
 
-        // Appointment Functions
+        // ==========================================
+        // 📅 APPOINTMENT FUNCTIONS
+        // ==========================================
         function openAppointmentModal(studentId, appointmentId = null) {
             const student = students.find(s => s.id === studentId);
             if (!student) return;
 
             document.getElementById('appointmentStudentId').value = studentId;
             document.getElementById('appointmentStudentName').value = student.name;
+            document.getElementById('ignoreConflict').value = '';
+            document.getElementById('conflictWarning').style.display = 'none';
             
             if (appointmentId) {
                 const apt = appointments.find(a => a.id === appointmentId);
@@ -1713,12 +2412,27 @@
             const studentId = parseInt(document.getElementById('appointmentStudentId').value);
             const student = students.find(s => s.id === studentId);
             const editId = document.getElementById('editAppointmentId').value;
+            const date = document.getElementById('appointmentDate').value;
+            const time = document.getElementById('appointmentTime').value;
+            const ignoreConflict = document.getElementById('ignoreConflict').value;
+
+            // GIAI ĐOẠN 1: Kiểm tra xung đột (nếu chưa ignore)
+            if (ignoreConflict !== 'true') {
+                const conflicts = findConflictingAppointments(date, time, editId);
+                if (conflicts.length > 0) {
+                    checkAppointmentConflict();
+                    if (!confirm(`⚠️ Phát hiện ${conflicts.length} lịch hẹn trùng giờ!\nBạn có chắc muốn tiếp tục?`)) {
+                        return;
+                    }
+                    document.getElementById('ignoreConflict').value = 'true';
+                }
+            }
 
             const appointmentData = {
                 studentId,
                 subject: document.getElementById('appointmentSubject').value,
-                date: document.getElementById('appointmentDate').value,
-                time: document.getElementById('appointmentTime').value,
+                date: date,
+                time: time,
                 notes: document.getElementById('appointmentNotes').value
             };
 
@@ -1790,7 +2504,9 @@
             });
         }
 
-        // Export Functions
+        // ==========================================
+        // 📤 EXPORT FUNCTIONS
+        // ==========================================
         function exportAllToExcel() {
             const wb = XLSX.utils.book_new();
             
@@ -1865,7 +2581,7 @@
 
         function exportBackupJSON() {
             const backup = {
-                version: '4.0',
+                version: '6.0_GiaiDoan1',
                 exportDate: new Date().toISOString(),
                 data: { students, appointments, receipts, centerInfo, bankInfo }
             };
@@ -1873,10 +2589,10 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `Backup_${formatDateForFile()}.json`;
+            link.download = `Backup_GD1_${formatDateForFile()}.json`;
             link.click();
             URL.revokeObjectURL(url);
-            showNotification('✅ Đã tải backup!', 'success');
+            showNotification('✅ Đã tải backup JSON!', 'success');
         }
 
         function restoreFromJSON(event) {
@@ -1932,7 +2648,9 @@
             showNotification('✅ Đã xóa toàn bộ!', 'success');
         }
 
-        // Helper Functions
+        // ==========================================
+        // 🛠️ HELPER FUNCTIONS
+        // ==========================================
         function getUpcomingAppointments() {
             const now = new Date();
             return appointments.filter(apt => new Date(apt.date + ' ' + apt.time) >= now)
@@ -1993,22 +2711,10 @@
             if (thousand > 0) result += convertThreeDigits(thousand) + 'nghìn ';
             if (remainder > 0) result += convertThreeDigits(remainder);
             
-            return (result.trim() + ' đồng').replace(/\s+/g, ' ');
+            let finalResult = result.trim() + ' đồng';
+            finalResult = finalResult.charAt(0).toUpperCase() + finalResult.slice(1);
+            return finalResult.replace(/\s+/g, ' ');
         }
-
-        // Search functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            ['searchStudent', 'searchAppointment', 'searchReceipt'].forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                    input.addEventListener('input', function() {
-                        if (id === 'searchStudent') renderStudentsList();
-                        if (id === 'searchAppointment') renderAppointmentsList();
-                        if (id === 'searchReceipt') renderReceiptsList();
-                    });
-                }
-            });
-        });
     </script>
 </body>
 </html>
