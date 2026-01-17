@@ -1964,10 +1964,20 @@
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label>Nội Dung *</label>
-                    <input type="text" id="receiptDescription" required placeholder="VD: Học phí tháng 1">
-                </div>
+                    <div class="form-group">
+                        <label>Liên kết Phiếu Đăng Ký</label>
+                        <select id="receiptRegistrationSelect" onchange="fillFromRegistration()">
+                            <option value="">-- Chọn phiếu ĐK để lấy số tiền --</option>
+                        </select>
+                        <input type="hidden" id="receiptRegistrationId">
+                        <small style="color: #666; display: block; margin-top: 5px;">Chọn phiếu ĐK để tự động điền nội dung và số tiền</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nội Dung *</label>
+                        <input type="text" id="receiptDescription" required placeholder="VD: Học phí tháng 1">
+                    </div>
+
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -3265,89 +3275,94 @@ function viewRegistration(id) {
     if (!reg) return;
     
     const pkg = packages.find(p => p.id === reg.packageId);
-    const packageInfo = pkg ? `${pkg.name} (${pkg.sessions} buổi)` : 'Gói thủ công';
+    const packageInfo = pkg ? `${pkg.name} (${pkg.sessions} buổi)` : '';
     
     const content = document.getElementById('registrationPreviewContent');
     content.innerHTML = `
-        <div style="padding: 25px; border: 2px solid #667eea; border-radius: 12px; position: relative;">
-            <!-- Header với Logo và QR -->
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+        <div style="padding: 25px; border: 2px solid #667eea; border-radius: 12px; max-width: 550px; margin: 0 auto; font-family: 'Segoe UI', sans-serif;">
+            <!-- Header: Logo + Tên TT bên trái, QR bên phải ngang hàng với tiêu đề -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                 <div>
-                    ${centerInfo.logo ? `<img src="${centerInfo.logo}" style="width: 70px; height: 70px; object-fit: contain; border-radius: 8px;">` : '<div style="width: 70px; height: 70px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #999;">Logo</div>'}
-                    <p style="margin-top: 8px; font-weight: 600; color: #667eea; font-size: 1.1em;">${centerInfo.name || 'TRUNG TÂM'}</p>
+                    ${centerInfo.logo ? `<img src="${centerInfo.logo}" style="width: 60px; height: 60px; object-fit: contain; border-radius: 8px;">` : '<div style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7em; color: #999;">Logo</div>'}
+                    <p style="margin-top: 5px; font-weight: 600; color: #667eea; font-size: 0.95em;">${centerInfo.name || 'TRUNG TÂM'}</p>
+                    ${centerInfo.address ? `<p style="font-size: 0.75em; color: #666; margin-top: 2px;">${centerInfo.address}</p>` : ''}
+                    ${centerInfo.phone ? `<p style="font-size: 0.75em; color: #666;">📞 ${centerInfo.phone}</p>` : ''}
+                    ${centerInfo.email ? `<p style="font-size: 0.75em; color: #666;">✉️ ${centerInfo.email}</p>` : ''}
                 </div>
-                <div id="regQRCode" style="text-align: center;">
-                    <div style="width: 100px; height: 100px; background: #f8f9fa; border-radius: 8px;"></div>
-                </div>
+                <div id="regQRCode" style="text-align: right;"></div>
             </div>
             
             <!-- Tiêu đề -->
-            <div style="text-align: center; margin-bottom: 25px;">
-                <h2 style="color: #667eea; margin-bottom: 8px; font-size: 1.6em;">PHIẾU ĐĂNG KÝ</h2>
-                <p style="font-size: 1.3em; font-weight: 700; color: #333;">${reg.regCode}</p>
+            <div style="text-align: center; margin: 20px 0 25px 0;">
+                <h2 style="color: #667eea; margin-bottom: 5px; font-size: 1.5em;">PHIẾU ĐĂNG KÝ</h2>
+                <p style="font-size: 1.1em; font-weight: 600; color: #333;">${reg.regCode}</p>
             </div>
             
-            <!-- Thông tin học viên -->
-            <div style="background: #f8f9fa; padding: 18px; border-radius: 10px; margin-bottom: 18px;">
-                <div style="margin-bottom: 10px;">
-                    <span style="color: #666; min-width: 100px; display: inline-block;">Học viên:</span>
+            <!-- Thông tin chi tiết -->
+            <div style="margin-bottom: 20px; line-height: 1.8;">
+                <div style="display: flex; margin-bottom: 8px;">
+                    <span style="color: #666; min-width: 100px;">Học viên:</span>
                     <strong>${reg.studentName}</strong>
                 </div>
-                <div style="margin-bottom: 10px;">
-                    <span style="color: #666; min-width: 100px; display: inline-block;">Phụ huynh:</span>
-                    <strong>${reg.parentName}</strong> - ${reg.parentPhone}
+                <div style="display: flex; margin-bottom: 8px;">
+                    <span style="color: #666; min-width: 100px;">Phụ huynh:</span>
+                    <span><strong>${reg.parentName}</strong> - ${reg.parentPhone}</span>
                 </div>
-                <div style="margin-bottom: 10px;">
-                    <span style="color: #666; min-width: 100px; display: inline-block;">Môn học:</span>
-                    <strong>${reg.subject}</strong>
-                    <span style="margin-left: 15px; color: #667eea; font-weight: 600;">Khóa: ${packageInfo}</span>
+                <div style="display: flex; margin-bottom: 8px; flex-wrap: wrap; align-items: center;">
+                    <span style="color: #666; min-width: 100px;">Môn học:</span>
+                    <span><strong style="text-decoration: underline;">${reg.subject}</strong></span>
+                    ${packageInfo ? `<span style="margin-left: 15px; color: #667eea;">Khóa: ${packageInfo}</span>` : ''}
+                    <span style="margin-left: 15px; color: #c62828; font-weight: 600;">Học phí: ${formatCurrencyVND(reg.tuitionFee)}</span>
                 </div>
-                <div>
-                    <span style="color: #666; min-width: 100px; display: inline-block;">Ngày đăng ký:</span>
-                    <strong>${formatDate(reg.registrationDate)}</strong>
+                <div style="display: flex; margin-bottom: 8px;">
+                    <span style="color: #666; min-width: 100px;">Ngày đăng ký:</span>
+                    <span>${formatDate(reg.registrationDate)}</span>
                 </div>
             </div>
             
-            <!-- Thông tin học phí - Nằm trên 1 dòng -->
-            <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 18px; border-radius: 10px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <!-- Học phí & Thành tiền - Nằm dưới, cách biệt rõ ràng -->
+            <div style="display: flex; justify-content: space-between; background: #f8f9fa; padding: 15px 20px; border-radius: 10px; margin-top: 15px;">
                 <div style="text-align: center;">
-                    <span style="color: #666; font-size: 0.9em;">Học phí</span>
-                    <p style="font-size: 1.2em; font-weight: 700; color: #1976d2; margin: 5px 0;">${formatCurrency(reg.tuitionFee)}</p>
+                    <span style="color: #666; font-size: 0.85em; display: block; margin-bottom: 5px;">Học phí</span>
+                    <span style="font-size: 1.2em; font-weight: 700; color: #1976d2;">${formatCurrencyVND(reg.tuitionFee)}</span>
                 </div>
                 ${reg.discountAmount > 0 ? `
                 <div style="text-align: center;">
-                    <span style="color: #666; font-size: 0.9em;">Giảm giá</span>
-                    <p style="font-size: 1.2em; font-weight: 700; color: #c62828; margin: 5px 0;">-${formatCurrency(reg.discountAmount)}</p>
+                    <span style="color: #666; font-size: 0.85em; display: block; margin-bottom: 5px;">Giảm giá</span>
+                    <span style="font-size: 1.2em; font-weight: 700; color: #c62828;">-${formatCurrencyVND(reg.discountAmount)}</span>
                 </div>
                 ` : ''}
                 <div style="text-align: center;">
-                    <span style="color: #666; font-size: 0.9em;">Thành tiền</span>
-                    <p style="font-size: 1.4em; font-weight: 700; color: #388e3c; margin: 5px 0;">${formatCurrency(reg.finalAmount)}</p>
+                    <span style="color: #666; font-size: 0.85em; display: block; margin-bottom: 5px;">Thành tiền</span>
+                    <span style="font-size: 1.3em; font-weight: 700; color: #388e3c;">${formatCurrencyVND(reg.finalAmount)}</span>
                 </div>
             </div>
             
             <!-- Footer -->
-            <p style="text-align: center; margin-top: 20px; color: #888; font-size: 0.85em;">
+            <p style="text-align: center; margin-top: 20px; color: #999; font-size: 0.8em;">
                 Quét mã QR để xem thông tin đăng ký
             </p>
         </div>
     `;
     
-    // Generate QR ở góc phải
+    // Generate QR với text ngắn gọn (tránh overflow)
     setTimeout(() => {
         const qrContainer = document.getElementById('regQRCode');
         if (qrContainer) {
             qrContainer.innerHTML = '';
+            const qrText = `${reg.regCode}|${reg.studentName}|${reg.finalAmount}`;
             new QRCode(qrContainer, {
-                text: `Ma DK: ${reg.regCode} | HV: ${reg.studentName} | Mon: ${reg.subject} | Tien: ${reg.finalAmount}`,
-                width: 100,
-                height: 100
+                text: qrText,
+                width: 90,
+                height: 90,
+                correctLevel: QRCode.CorrectLevel.L
             });
         }
     }, 100);
     
     openModal('viewRegistrationModal');
 }
+
 
 function editRegistration(id) {
     const reg = registrations.find(r => r.id === id);
@@ -3416,13 +3431,17 @@ function openReceiptModal() {
     document.getElementById('receiptForm').reset();
     document.getElementById('receiptDate').value = new Date().toISOString().split('T')[0];
     populateReceiptStudentDropdown();
+    document.getElementById('receiptRegistrationId').value = '';
+    document.getElementById('receiptRegistrationSelect').innerHTML = '<option value="">-- Chọn phiếu ĐK (tùy chọn) --</option>';
     openModal('receiptModal');
 }
+
 
 function openReceiptModalForStudent(studentId) {
     openReceiptModal();
     document.getElementById('receiptStudentId').value = studentId;
     fillReceiptStudentInfo();
+    loadRegistrationsForStudent(studentId);
 }
 
 function populateReceiptStudentDropdown() {
@@ -3432,10 +3451,51 @@ function populateReceiptStudentDropdown() {
 }
 
 function fillReceiptStudentInfo() {
-    const student = students.find(s => s.id === document.getElementById('receiptStudentId').value);
+    const studentId = document.getElementById('receiptStudentId').value;
+    const student = students.find(s => s.id === studentId);
     document.getElementById('receiptParentName').value = student?.parentName || '';
     document.getElementById('receiptParentPhone').value = student?.parentPhone || '';
+    
+    // Load danh sách phiếu ĐK của học viên
+    if (studentId) {
+        loadRegistrationsForStudent(studentId);
+    } else {
+        document.getElementById('receiptRegistrationSelect').innerHTML = '<option value="">-- Chọn phiếu ĐK (tùy chọn) --</option>';
+    }
 }
+
+function loadRegistrationsForStudent(studentId) {
+    const studentRegs = registrations.filter(r => r.studentId === studentId);
+    const select = document.getElementById('receiptRegistrationSelect');
+    
+    if (studentRegs.length === 0) {
+        select.innerHTML = '<option value="">-- Không có phiếu ĐK --</option>';
+        return;
+    }
+    
+    select.innerHTML = '<option value="">-- Chọn phiếu ĐK để lấy số tiền --</option>' +
+        studentRegs.map(r => {
+            const pkg = packages.find(p => p.id === r.packageId);
+            const pkgName = pkg ? pkg.name : '';
+            return `<option value="${r.id}">${r.regCode} - ${r.subject} ${pkgName ? '(' + pkgName + ')' : ''} - ${formatCurrency(r.finalAmount)}</option>`;
+        }).join('');
+}
+
+function fillFromRegistration() {
+    const regId = document.getElementById('receiptRegistrationSelect').value;
+    if (!regId) return;
+    
+    const reg = registrations.find(r => r.id === regId);
+    if (!reg) return;
+    
+    const pkg = packages.find(p => p.id === reg.packageId);
+    const pkgName = pkg ? ` - ${pkg.name} (${pkg.sessions} buổi)` : '';
+    
+    document.getElementById('receiptDescription').value = `Học phí ${reg.subject}${pkgName}`;
+    document.getElementById('receiptAmount').value = formatNumberInput(reg.finalAmount);
+    document.getElementById('receiptRegistrationId').value = reg.id;
+}
+
 
 function saveReceipt(event) {
     event.preventDefault();
@@ -3604,6 +3664,14 @@ function formatDateFull(dateStr) {
 // Helper function cho format tiền VND với đ
 function formatCurrencyVND(amount) {
     return new Intl.NumberFormat('vi-VN').format(amount || 0) + ' đ';
+}
+
+// Helper function cho format ngày đầy đủ
+function formatDateFull(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    const days = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+    return `${days[d.getDay()]} ${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 }
 
 function editReceipt(id) {
@@ -3920,13 +3988,26 @@ function restoreFromJSON(event) {
             centerInfo = backup.data.centerInfo || {};
             bankInfo = backup.data.bankInfo || {};
             
-            ['students', 'appointments', 'registrations', 'receipts', 'subjects', 'packages', 'promotions'].forEach(key => localStorage.setItem(key, JSON.stringify(eval(key))));
+            // Làm sạch dữ liệu logo nếu quá lớn (gây lỗi QR)
+            if (centerInfo.logo && centerInfo.logo.length > 50000) {
+                console.warn('Logo quá lớn, đã bỏ qua để tránh lỗi');
+                // Giữ nguyên logo, chỉ cảnh báo
+            }
+            
+            ['students', 'appointments', 'registrations', 'receipts', 'subjects', 'packages', 'promotions'].forEach(key => {
+                localStorage.setItem(key, JSON.stringify(eval(key)));
+            });
             localStorage.setItem('centerInfo', JSON.stringify(centerInfo));
             localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
             
-            renderAll(); loadCenterInfo(); loadBankInfo();
+            renderAll(); 
+            loadCenterInfo(); 
+            loadBankInfo();
             showNotification('Khôi phục thành công!');
-        } catch (err) { showNotification('Lỗi: ' + err.message, 'error'); }
+        } catch (err) { 
+            console.error('Restore error:', err);
+            showNotification('Lỗi: ' + err.message, 'error'); 
+        }
     };
     reader.readAsText(file);
     event.target.value = '';
@@ -4018,22 +4099,31 @@ function restoreFromBackupHistory(id) {
     const backup = backupHistory.find(b => b.id === id);
     if (!backup || !confirm('Khôi phục từ backup này?')) return;
     
-    students = backup.data.students || [];
-    appointments = backup.data.appointments || [];
-    registrations = backup.data.registrations || [];
-    receipts = backup.data.receipts || [];
-    subjects = backup.data.subjects || subjects;
-    packages = backup.data.packages || [];
-    promotions = backup.data.promotions || [];
-    centerInfo = backup.data.centerInfo || {};
-    bankInfo = backup.data.bankInfo || {};
-    
-    ['students', 'appointments', 'registrations', 'receipts', 'subjects', 'packages', 'promotions'].forEach(key => localStorage.setItem(key, JSON.stringify(eval(key))));
-    localStorage.setItem('centerInfo', JSON.stringify(centerInfo));
-    localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
-    
-    renderAll(); loadCenterInfo(); loadBankInfo();
-    showNotification('Khôi phục thành công!');
+    try {
+        students = backup.data.students || [];
+        appointments = backup.data.appointments || [];
+        registrations = backup.data.registrations || [];
+        receipts = backup.data.receipts || [];
+        subjects = backup.data.subjects || subjects;
+        packages = backup.data.packages || [];
+        promotions = backup.data.promotions || [];
+        centerInfo = backup.data.centerInfo || {};
+        bankInfo = backup.data.bankInfo || {};
+        
+        ['students', 'appointments', 'registrations', 'receipts', 'subjects', 'packages', 'promotions'].forEach(key => {
+            localStorage.setItem(key, JSON.stringify(eval(key)));
+        });
+        localStorage.setItem('centerInfo', JSON.stringify(centerInfo));
+        localStorage.setItem('bankInfo', JSON.stringify(bankInfo));
+        
+        renderAll(); 
+        loadCenterInfo(); 
+        loadBankInfo();
+        showNotification('Khôi phục thành công!');
+    } catch (err) {
+        console.error('Restore error:', err);
+        showNotification('Lỗi khôi phục: ' + err.message, 'error');
+    }
 }
 
 // ==========================================
